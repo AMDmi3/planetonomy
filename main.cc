@@ -25,12 +25,15 @@
 #include <SDL2pp/SDL.hh>
 #include <SDL2pp/Window.hh>
 #include <SDL2pp/Renderer.hh>
+#include <SDL2pp/Texture.hh>
 
 int main(int /*argc*/, char** /*argv*/) try {
 	// SDL stuff
 	SDL2pp::SDL sdl(SDL_INIT_VIDEO);
 	SDL2pp::Window window("Planetonomy", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 640, 480, SDL_WINDOW_RESIZABLE);
 	SDL2pp::Renderer renderer(window, -1, SDL_RENDERER_ACCELERATED);
+
+	SDL2pp::Texture sprites(renderer, DATADIR "/sprites.png");
 
 	unsigned int prev_ticks = SDL_GetTicks();
 
@@ -56,6 +59,8 @@ int main(int /*argc*/, char** /*argv*/) try {
 		// Render
 		renderer.SetDrawColor(0, 0, 0);
 		renderer.Clear();
+
+		renderer.Copy(sprites);
 
 		renderer.Present();
 
