@@ -1,8 +1,8 @@
-# FIXME_NAME
+# Planetonomy
 
-[![Build Status](https://travis-ci.org/FIXME_USER/FIXME_PROJECT.svg?branch=master)](https://travis-ci.org/FIXME_USER/FIXME_PROJECT)
+[![Build Status](https://travis-ci.org/AMDmi3/planetonomy.svg?branch=master)](https://travis-ci.org/AMDmi3/planetonomy)
 
-FIXME_DESCRIPTION
+Old-school platformer/exploration game with CGA graphics
 
 ## Building
 
@@ -25,7 +25,7 @@ cmake . && make
 
 ## Author
 
-* [FIXME_NAME](https://github.com/FIXME_USER) <FIXME_EMAIL>
+* [Dmitry Marakasov](https://github.com/AMDmi3) <amdmi3@amdmi3.ru>
 
 ## License
 
