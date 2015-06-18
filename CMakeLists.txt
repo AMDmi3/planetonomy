@@ -22,6 +22,7 @@ ADD_DEFINITIONS(-DDATADIR="${PROJECT_SOURCE_DIR}/data")
 SET(PLANETONOMY_SOURCES
 	src/Application.cc
 	src/GameScene.cc
+	src/LowresPainter.cc
 	src/Main.cc
 	src/Scene.cc
 )
