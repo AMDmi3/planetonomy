@@ -23,14 +23,18 @@
 #include <SDL2pp/Texture.hh>
 
 #include "Scene.hh"
+#include "LowresPainter.hh"
 
 class GameScene : public Scene {
 private:
 	SDL2pp::Texture tiles_;
 
+	LowresPainter painter_;
+
 public:
 	GameScene(Application& app);
 
+	virtual void ProcessEvent(const SDL_Event& event) override;
 	virtual void Update() override;
 	virtual void Render() override;
 };
