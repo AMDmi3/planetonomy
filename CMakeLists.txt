@@ -20,7 +20,10 @@ ADD_DEFINITIONS(-DDATADIR="${PROJECT_SOURCE_DIR}/data")
 
 # sources
 SET(PLANETONOMY_SOURCES
-	main.cc
+	src/Application.cc
+	src/GameScene.cc
+	src/Main.cc
+	src/Scene.cc
 )
 
 SET(PLANETONOMY_HEADERS
