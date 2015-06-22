@@ -26,7 +26,12 @@ GameScene::GameScene(Application& app)
 	  tiles_(GetRenderer(), DATADIR "/images/tiles.png"),
 	  painter_(GetRenderer(), tiles_, SCREEN_WIDTH_PIXELS, SCREEN_HEIGHT_PIXELS) {
 
-	std::fill(ground_.begin(), ground_.end(), true);
+	std::fill(ground_.begin(), ground_.end(), false);
+	for (int x = 0; x < SCREEN_WIDTH_TILES; x++)
+		ground_[x + SCREEN_WIDTH_TILES * (SCREEN_HEIGHT_TILES - 1)] = true;
+
+	player_x_ = SCREEN_WIDTH_PIXELS / 2.0f;
+	player_y_ = SCREEN_HEIGHT_PIXELS / 2.0f;
 
 	painter_.UpdateSize();
 }
@@ -51,6 +56,7 @@ void GameScene::Update() {
 
 void GameScene::Render() {
 	RenderGround();
+	RenderPlayer();
 }
 
 void GameScene::RenderGround() {
@@ -58,4 +64,8 @@ void GameScene::RenderGround() {
 		for (int x = 0; x < SCREEN_WIDTH_TILES; x++)
 			if (ground_[x + y * SCREEN_WIDTH_TILES])
 				painter_.Copy(SpriteData[SPRITE_GROUND], SDL2pp::Point(x * TILE_SIZE, y * TILE_SIZE));
+}
+
+void GameScene::RenderPlayer() {
+	painter_.Copy(SpriteData[SPRITE_PLAYER], SDL2pp::Point(player_x_, player_y_));
 }

@@ -37,6 +37,8 @@ private:
 
 private:
 	std::array<bool, SCREEN_WIDTH_TILES * SCREEN_HEIGHT_TILES> ground_;
+	float player_x_;
+	float player_y_;
 
 public:
 	GameScene(Application& app);
@@ -46,6 +48,7 @@ public:
 	virtual void Render() override;
 
 	void RenderGround();
+	void RenderPlayer();
 };
 
 #endif // GAMESCENE_HH

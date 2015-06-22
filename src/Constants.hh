@@ -33,6 +33,7 @@ enum GameConstants {
 
 enum SpriteNames {
 	SPRITE_GROUND,
+	SPRITE_PLAYER,
 
 	NUM_SPRITES
 };
