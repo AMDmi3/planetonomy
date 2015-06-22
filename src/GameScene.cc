@@ -18,23 +18,20 @@
  */
 
 #include <algorithm>
+#include <cmath>
+#include <cassert>
 
 #include "GameScene.hh"
 
 GameScene::GameScene(Application& app)
 	: Scene(app),
 	  tiles_(GetRenderer(), DATADIR "/images/tiles.png"),
-	  painter_(GetRenderer(), tiles_, SCREEN_WIDTH_PIXELS, SCREEN_HEIGHT_PIXELS) {
-	prev_frame_time_ = SDL_GetTicks();
-
+	  painter_(GetRenderer(), tiles_, SCREEN_WIDTH_PIXELS, SCREEN_HEIGHT_PIXELS),
+	  prev_frame_time_(SDL_GetTicks()),
+	  player_(SCREEN_WIDTH_PIXELS / 2.0f, SCREEN_HEIGHT_PIXELS / 2.0f, SpriteData[SPRITE_PLAYER].w, SpriteData[SPRITE_PLAYER].h) {
 	std::fill(ground_.begin(), ground_.end(), false);
 	for (int x = 0; x < SCREEN_WIDTH_TILES; x++)
 		ground_[x + SCREEN_WIDTH_TILES * (SCREEN_HEIGHT_TILES - 1)] = true;
-
-	player_x_ = SCREEN_WIDTH_PIXELS / 2.0f;
-	player_y_ = SCREEN_HEIGHT_PIXELS / 2.0f;
-	player_vel_x_ = 0.0f;
-	player_vel_y_ = 0.0f;
 
 	painter_.UpdateSize();
 }
@@ -61,13 +58,9 @@ void GameScene::Update() {
 	prev_frame_time_ = frame_time;
 
 	// update player velocity and position
-	player_vel_y_ += GForce * delta_time;
+	player_.yvel += GForce * delta_time;
 
-	float new_player_x_ = player_x_ + player_vel_x_ * delta_time;
-	float new_player_y_ = player_y_ + player_vel_y_ * delta_time;
-
-	player_x_ = new_player_x_;
-	player_y_ = new_player_y_;
+	MoveWithCollision(player_, delta_time);
 }
 
 void GameScene::Render() {
@@ -86,5 +79,40 @@ void GameScene::RenderGround() {
 }
 
 void GameScene::RenderPlayer() {
-	painter_.Copy(SpriteData[SPRITE_PLAYER], SDL2pp::Point(player_x_, player_y_));
+	painter_.Copy(SpriteData[SPRITE_PLAYER], SDL2pp::Point(player_.x, player_.y));
+}
+
+bool GameScene::MoveWithCollision(GameScene::DynamicObject& object, float delta_time) {
+	// move by 1 pixel steps, checking collisions each step
+	int num_steps = 1 + (int)(std::max(object.xvel, object.yvel) * delta_time);
+
+	for (int step = 1; step <= num_steps; step++) {
+		float new_x = object.x + object.xvel * delta_time * step / num_steps;
+		float new_y = object.y + object.yvel * delta_time * step / num_steps;
+
+		SDL2pp::Rect new_rect(
+				std::round(new_x),
+				std::round(new_y),
+				object.width,
+				object.height
+			);
+
+		for (int y = new_rect.y / TILE_SIZE; y <= std::min(new_rect.GetY2() / TILE_SIZE, SCREEN_HEIGHT_TILES - 1); y++) {
+			for (int x = new_rect.x / TILE_SIZE; x <= std::min(new_rect.GetX2() / TILE_SIZE, SCREEN_WIDTH_TILES - 1); x++) {
+				if (!ground_[x + y * SCREEN_WIDTH_TILES])
+					continue;
+				SDL2pp::Rect ground_rect(x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+				if (new_rect.Intersects(ground_rect)) {
+					object.x += object.xvel * delta_time * (step - 1) / num_steps;
+					object.y += object.yvel * delta_time * (step - 1) / num_steps;
+					return true;
+				}
+			}
+		}
+	}
+
+	object.x += object.xvel * delta_time;
+	object.y += object.yvel * delta_time;
+
+	return false;
 }

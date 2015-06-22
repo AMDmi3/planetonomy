@@ -36,15 +36,28 @@ private:
 	LowresPainter painter_;
 
 private:
+	struct DynamicObject {
+		float x;
+		float y;
+		float xvel;
+		float yvel;
+
+		int width;
+		int height;
+
+		DynamicObject(int x, int y, int width, int height)
+			: x(x), y(y),
+			  xvel(0), yvel(0),
+			  width(width), height(height) {
+		}
+	};
+
+private:
 	unsigned int prev_frame_time_;
 
 	std::array<bool, SCREEN_WIDTH_TILES * SCREEN_HEIGHT_TILES> ground_;
 
-	float player_x_;
-	float player_y_;
-
-	float player_vel_x_;
-	float player_vel_y_;
+	DynamicObject player_;
 
 public:
 	GameScene(Application& app);
@@ -55,6 +68,8 @@ public:
 
 	void RenderGround();
 	void RenderPlayer();
+
+	bool MoveWithCollision(DynamicObject& object, float delta_time);
 };
 
 #endif // GAMESCENE_HH
