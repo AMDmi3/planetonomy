@@ -22,7 +22,7 @@
 GameScene::GameScene(Application& app)
 	: Scene(app),
 	  tiles_(GetRenderer(), DATADIR "/images/tiles.png"),
-	  painter_(GetRenderer(), tiles_, 320, 200) {
+	  painter_(GetRenderer(), tiles_, SCREEN_WIDTH_PIXELS, SCREEN_HEIGHT_PIXELS) {
 	painter_.UpdateSize();
 }
 
@@ -45,7 +45,11 @@ void GameScene::Update() {
 }
 
 void GameScene::Render() {
-	for (int x = 0; x < 20; x++)
-		for (int y = 0; y < 12; y++)
-			painter_.Copy(SDL2pp::Rect(16, 0, 16, 16), SDL2pp::Point(x * 16, y * 16));
+	RenderGround();
+}
+
+void GameScene::RenderGround() {
+	for (int y = 0; y < SCREEN_HEIGHT_TILES; y++)
+		for (int x = 0; x < SCREEN_WIDTH_TILES; x++)
+			painter_.Copy(SDL2pp::Rect(16, 0, 16, 16), SDL2pp::Point(x * TILE_SIZE, y * TILE_SIZE));
 }

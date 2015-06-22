@@ -17,30 +17,18 @@
  * along with planetonomy.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef GAMESCENE_HH
-#define GAMESCENE_HH
+#ifndef CONSTANTS_HH
+#define CONSTANTS_HH
 
-#include <SDL2pp/Texture.hh>
+#include <SDL2pp/Rect.hh>
 
-#include "Scene.hh"
-#include "LowresPainter.hh"
+enum GameConstants {
+	TILE_SIZE = 16,
+	SCREEN_WIDTH_PIXELS = 320,
+	SCREEN_HEIGHT_PIXELS = 200,
 
-#include "Constants.hh"
-
-class GameScene : public Scene {
-private:
-	SDL2pp::Texture tiles_;
-
-	LowresPainter painter_;
-
-public:
-	GameScene(Application& app);
-
-	virtual void ProcessEvent(const SDL_Event& event) override;
-	virtual void Update() override;
-	virtual void Render() override;
-
-	void RenderGround();
+	SCREEN_WIDTH_TILES = SCREEN_WIDTH_PIXELS/TILE_SIZE,
+	SCREEN_HEIGHT_TILES = SCREEN_HEIGHT_PIXELS/TILE_SIZE,
 };
 
-#endif // GAMESCENE_HH
+#endif // CONSTANTS_HH
