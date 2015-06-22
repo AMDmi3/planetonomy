@@ -17,12 +17,17 @@
  * along with planetonomy.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <algorithm>
+
 #include "GameScene.hh"
 
 GameScene::GameScene(Application& app)
 	: Scene(app),
 	  tiles_(GetRenderer(), DATADIR "/images/tiles.png"),
 	  painter_(GetRenderer(), tiles_, SCREEN_WIDTH_PIXELS, SCREEN_HEIGHT_PIXELS) {
+
+	std::fill(ground_.begin(), ground_.end(), true);
+
 	painter_.UpdateSize();
 }
 
@@ -51,5 +56,6 @@ void GameScene::Render() {
 void GameScene::RenderGround() {
 	for (int y = 0; y < SCREEN_HEIGHT_TILES; y++)
 		for (int x = 0; x < SCREEN_WIDTH_TILES; x++)
-			painter_.Copy(SDL2pp::Rect(16, 0, 16, 16), SDL2pp::Point(x * TILE_SIZE, y * TILE_SIZE));
+			if (ground_[x + y * SCREEN_WIDTH_TILES])
+				painter_.Copy(SpriteData[SPRITE_GROUND], SDL2pp::Point(x * TILE_SIZE, y * TILE_SIZE));
 }

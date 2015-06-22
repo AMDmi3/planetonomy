@@ -17,35 +17,8 @@
  * along with planetonomy.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef GAMESCENE_HH
-#define GAMESCENE_HH
-
-#include <array>
-
-#include <SDL2pp/Texture.hh>
-
-#include "Scene.hh"
-#include "LowresPainter.hh"
-
 #include "Constants.hh"
 
-class GameScene : public Scene {
-private:
-	SDL2pp::Texture tiles_;
-
-	LowresPainter painter_;
-
-private:
-	std::array<bool, SCREEN_WIDTH_TILES * SCREEN_HEIGHT_TILES> ground_;
-
-public:
-	GameScene(Application& app);
-
-	virtual void ProcessEvent(const SDL_Event& event) override;
-	virtual void Update() override;
-	virtual void Render() override;
-
-	void RenderGround();
+SDL2pp::Rect SpriteData[NUM_SPRITES] = {
+	{ 16, 0, 16, 16 }		// GROUND
 };
-
-#endif // GAMESCENE_HH

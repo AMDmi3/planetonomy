@@ -31,4 +31,12 @@ enum GameConstants {
 	SCREEN_HEIGHT_TILES = SCREEN_HEIGHT_PIXELS/TILE_SIZE,
 };
 
+enum SpriteNames {
+	SPRITE_GROUND,
+
+	NUM_SPRITES
+};
+
+extern SDL2pp::Rect SpriteData[NUM_SPRITES];
+
 #endif // CONSTANTS_HH
