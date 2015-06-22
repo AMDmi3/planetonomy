@@ -33,6 +33,8 @@ GameScene::GameScene(Application& app)
 	for (int x = 0; x < SCREEN_WIDTH_TILES; x++)
 		ground_[x + SCREEN_WIDTH_TILES * (SCREEN_HEIGHT_TILES - 1)] = true;
 
+	control_flags_ = 0;
+
 	painter_.UpdateSize();
 }
 
@@ -45,6 +47,27 @@ void GameScene::ProcessEvent(const SDL_Event& event) {
 		case SDLK_ESCAPE: case SDLK_q:
 			SetExit(true);
 			return;
+		case SDLK_LEFT:
+			control_flags_ |= LEFT;
+			break;
+		case SDLK_RIGHT:
+			control_flags_ |= RIGHT;
+			break;
+		case SDLK_UP:
+			control_flags_ |= UP;
+			break;
+		}
+	} else if (event.type == SDL_KEYUP) {
+		switch (event.key.keysym.sym) {
+		case SDLK_LEFT:
+			control_flags_ &= ~LEFT;
+			break;
+		case SDLK_RIGHT:
+			control_flags_ &= ~RIGHT;
+			break;
+		case SDLK_UP:
+			control_flags_ &= ~UP;
+			break;
 		}
 	} else if (event.type == SDL_WINDOWEVENT) {
 		painter_.UpdateSize();

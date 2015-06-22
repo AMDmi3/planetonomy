@@ -59,6 +59,14 @@ private:
 
 	DynamicObject player_;
 
+	enum ControlFlags {
+		LEFT = 0x01,
+		RIGHT = 0x02,
+		UP = 0x04,
+	};
+
+	int control_flags_;
+
 public:
 	GameScene(Application& app);
 
