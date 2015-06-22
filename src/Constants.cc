@@ -20,5 +20,5 @@
 #include "Constants.hh"
 
 SDL2pp::Rect SpriteData[NUM_SPRITES] = {
-	{ 16, 0, 16, 16 }		// GROUND
+	{ 19, 1, 16, 16 },	// GROUND
 };
