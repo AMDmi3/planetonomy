@@ -38,6 +38,11 @@ enum SpriteNames {
 	NUM_SPRITES
 };
 
-extern SDL2pp::Rect SpriteData[NUM_SPRITES];
+static const float GForce = 100.0f;
+
+static const SDL2pp::Rect SpriteData[NUM_SPRITES] = {
+	{ 19, 1, 16, 16 },  // GROUND
+	{ 1, 237, 8, 18 },  // PLAYER
+};
 
 #endif // CONSTANTS_HH
