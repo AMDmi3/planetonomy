@@ -25,6 +25,7 @@ GameScene::GameScene(Application& app)
 	: Scene(app),
 	  tiles_(GetRenderer(), DATADIR "/images/tiles.png"),
 	  painter_(GetRenderer(), tiles_, SCREEN_WIDTH_PIXELS, SCREEN_HEIGHT_PIXELS) {
+	prev_frame_time_ = SDL_GetTicks();
 
 	std::fill(ground_.begin(), ground_.end(), false);
 	for (int x = 0; x < SCREEN_WIDTH_TILES; x++)
@@ -32,6 +33,8 @@ GameScene::GameScene(Application& app)
 
 	player_x_ = SCREEN_WIDTH_PIXELS / 2.0f;
 	player_y_ = SCREEN_HEIGHT_PIXELS / 2.0f;
+	player_vel_x_ = 0.0f;
+	player_vel_y_ = 0.0f;
 
 	painter_.UpdateSize();
 }
@@ -52,9 +55,25 @@ void GameScene::ProcessEvent(const SDL_Event& event) {
 }
 
 void GameScene::Update() {
+	// update time
+	unsigned int frame_time = SDL_GetTicks();
+	float delta_time = (frame_time - prev_frame_time_) / 1000.0f; // seconds
+	prev_frame_time_ = frame_time;
+
+	// update player velocity and position
+	player_vel_y_ += GForce * delta_time;
+
+	float new_player_x_ = player_x_ + player_vel_x_ * delta_time;
+	float new_player_y_ = player_y_ + player_vel_y_ * delta_time;
+
+	player_x_ = new_player_x_;
+	player_y_ = new_player_y_;
 }
 
 void GameScene::Render() {
+	GetRenderer().SetDrawColor(0, 0, 0);
+	GetRenderer().Clear();
+
 	RenderGround();
 	RenderPlayer();
 }

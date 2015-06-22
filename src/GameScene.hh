@@ -36,9 +36,15 @@ private:
 	LowresPainter painter_;
 
 private:
+	unsigned int prev_frame_time_;
+
 	std::array<bool, SCREEN_WIDTH_TILES * SCREEN_HEIGHT_TILES> ground_;
+
 	float player_x_;
 	float player_y_;
+
+	float player_vel_x_;
+	float player_vel_y_;
 
 public:
 	GameScene(Application& app);
