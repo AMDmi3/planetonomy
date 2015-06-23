@@ -63,31 +63,31 @@ void GameScene::ProcessEvent(const SDL_Event& event) {
 	if (event.type == SDL_QUIT) {
 		SetExit(true);
 		return;
-	} else if (event.type == SDL_KEYDOWN) {
+	} else if (event.type == SDL_KEYDOWN && event.key.repeat == 0) {
 		switch (event.key.keysym.sym) {
 		case SDLK_ESCAPE: case SDLK_q:
 			SetExit(true);
 			return;
 		case SDLK_LEFT:
-			control_flags_ |= LEFT;
+			control_flags_ |= (int)ControlFlags::LEFT;
 			break;
 		case SDLK_RIGHT:
-			control_flags_ |= RIGHT;
+			control_flags_ |= (int)ControlFlags::RIGHT;
 			break;
 		case SDLK_UP:
-			control_flags_ |= UP;
+			control_flags_ |= (int)ControlFlags::UP;
 			break;
 		}
 	} else if (event.type == SDL_KEYUP) {
 		switch (event.key.keysym.sym) {
 		case SDLK_LEFT:
-			control_flags_ &= ~LEFT;
+			control_flags_ &= ~(int)ControlFlags::LEFT;
 			break;
 		case SDLK_RIGHT:
-			control_flags_ &= ~RIGHT;
+			control_flags_ &= ~(int)ControlFlags::RIGHT;
 			break;
 		case SDLK_UP:
-			control_flags_ &= ~UP;
+			control_flags_ &= ~(int)ControlFlags::UP;
 			break;
 		}
 	} else if (event.type == SDL_WINDOWEVENT) {
@@ -104,7 +104,31 @@ void GameScene::Update() {
 	// update player velocity and position
 	player_.yvel += GForce * delta_time;
 
-	MoveWithCollision(player_, delta_time);
+	int moveresult = MoveWithCollision(player_, delta_time);
+
+	// process player controls
+	bool on_ground = (moveresult & (int)CollisionState::BOTTOM) && player_.yvel >= 0.0f;
+	float control_rate = on_ground ? 1.0 : AirControlRate;
+
+	// move left/right
+	if (control_flags_ & (int)ControlFlags::LEFT && player_.xvel >= -WalkMaxSpeed) {
+		player_.xvel = std::max(-WalkMaxSpeed, player_.xvel - control_rate * WalkAccel * delta_time);
+	} else if (control_flags_ & (int)ControlFlags::RIGHT && player_.xvel <= WalkMaxSpeed) {
+		player_.xvel = std::min(WalkMaxSpeed, player_.xvel + control_rate * WalkAccel * delta_time);
+	} else if (on_ground) { // decelerate when on ground
+		if (player_.xvel > 0)
+			player_.xvel -= std::min(player_.xvel, WalkDecel * delta_time);
+		if (player_.xvel < 0)
+			player_.xvel += std::min(-player_.xvel, WalkDecel * delta_time);
+	}
+
+	// jump
+	if (on_ground && control_flags_ & (int)ControlFlags::UP)
+		player_.yvel -= JumpImpulse;
+
+	// long fall
+	if (moveresult & (int)CollisionState::SCREENBOTTOM)
+		SetExit(true);
 }
 
 void GameScene::Render() {
@@ -126,37 +150,68 @@ void GameScene::RenderPlayer() {
 	painter_.Copy(SpriteData[SPRITE_PLAYER], SDL2pp::Point(player_.x, player_.y));
 }
 
-bool GameScene::MoveWithCollision(GameScene::DynamicObject& object, float delta_time) {
-	// move by 1 pixel steps, checking collisions each step
-	int num_steps = 1 + (int)(std::max(object.xvel, object.yvel) * delta_time);
+int GameScene::MoveWithCollision(GameScene::DynamicObject& object, float delta_time) {
+	// move in 1 pixel steps, checking collisions on each step
+	int num_steps = 1 + (int)(std::max(std::abs(object.xvel), std::abs(object.yvel)) * delta_time);
 
-	for (int step = 1; step <= num_steps; step++) {
-		float new_x = object.x + object.xvel * delta_time * step / num_steps;
-		float new_y = object.y + object.yvel * delta_time * step / num_steps;
+	int result = (int)CollisionState::NONE;
+	for (int step = 0; step < num_steps; step++) {
+		int int_x = (int)object.x;
+		int int_y = (int)object.y;
 
-		SDL2pp::Rect new_rect(
-				std::round(new_x),
-				std::round(new_y),
-				object.width,
-				object.height
+		SDL2pp::Rect coll_rect(
+				int_x - 1,
+				int_y - 1,
+				object.width + 2,
+				object.height + 2
 			);
 
-		for (int y = new_rect.y / TILE_SIZE; y <= std::min(new_rect.GetY2() / TILE_SIZE, SCREEN_HEIGHT_TILES - 1); y++) {
-			for (int x = new_rect.x / TILE_SIZE; x <= std::min(new_rect.GetX2() / TILE_SIZE, SCREEN_WIDTH_TILES - 1); x++) {
-				if (!ground_[x + y * SCREEN_WIDTH_TILES])
-					continue;
-				SDL2pp::Rect ground_rect(x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
-				if (new_rect.Intersects(ground_rect)) {
-					object.x += object.xvel * delta_time * (step - 1) / num_steps;
-					object.y += object.yvel * delta_time * (step - 1) / num_steps;
-					return true;
+		if (coll_rect.GetX() < 0)
+			result |= (int)CollisionState::LEFT | (int)CollisionState::SCREENLEFT;
+		if (coll_rect.GetY() < 0)
+			result |= (int)CollisionState::TOP | (int)CollisionState::SCREENTOP;
+		if (coll_rect.GetX2() >= SCREEN_WIDTH_TILES * TILE_SIZE)
+			result |= (int)CollisionState::RIGHT | (int)CollisionState::SCREENRIGHT;
+		if (coll_rect.GetY2() >= SCREEN_HEIGHT_TILES * TILE_SIZE)
+			result |= (int)CollisionState::BOTTOM | (int)CollisionState::SCREENBOTTOM;
+
+		for (int y = std::max(coll_rect.y / TILE_SIZE, 0); y <= std::min(coll_rect.GetY2() / TILE_SIZE, SCREEN_HEIGHT_TILES - 1); y++) {
+			for (int x = std::max(coll_rect.x / TILE_SIZE, 0); x <= std::min(coll_rect.GetX2() / TILE_SIZE, SCREEN_WIDTH_TILES - 1); x++) {
+				if (x < 0) {
+					result |= (int)CollisionState::LEFT;
+				} else if (x >= SCREEN_WIDTH_TILES) {
+					result |= (int)CollisionState::RIGHT;
+				} else if (y < 0) {
+					result |= (int)CollisionState::TOP;
+				} else if (y >= SCREEN_HEIGHT_TILES) {
+					result |= (int)CollisionState::BOTTOM;
+				} else if (ground_[x + y * SCREEN_WIDTH_TILES]) {
+					SDL2pp::Rect ground_rect(x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+
+					if (SDL2pp::Rect(int_x, int_y - 1, object.width, 1).Intersects(ground_rect))
+						result |= (int)CollisionState::TOP;
+					if (SDL2pp::Rect(int_x - 1, int_y, 1, object.height).Intersects(ground_rect))
+						result |= (int)CollisionState::LEFT;
+					if (SDL2pp::Rect(int_x, int_y + object.height, object.width, 1).Intersects(ground_rect))
+						result |= (int)CollisionState::BOTTOM;
+					if (SDL2pp::Rect(int_x + object.width, int_y, 1, object.height).Intersects(ground_rect))
+						result |= (int)CollisionState::RIGHT;
 				}
 			}
 		}
+
+		if (result & (int)CollisionState::TOP && object.yvel < 0.0f)
+			object.yvel = 0.0f;
+		if (result & (int)CollisionState::BOTTOM && object.yvel > 0.0f)
+			object.yvel = 0.0f;
+		if (result & (int)CollisionState::LEFT && object.xvel < 0.0f)
+			object.xvel = 0.0f;
+		if (result & (int)CollisionState::RIGHT && object.xvel > 0.0f)
+			object.xvel = 0.0f;
+
+		object.x += object.xvel * delta_time / num_steps;
+		object.y += object.yvel * delta_time / num_steps;
 	}
 
-	object.x += object.xvel * delta_time;
-	object.y += object.yvel * delta_time;
-
-	return false;
+	return result;
 }

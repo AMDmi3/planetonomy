@@ -59,10 +59,23 @@ private:
 
 	DynamicObject player_;
 
-	enum ControlFlags {
+	enum class ControlFlags {
 		LEFT = 0x01,
 		RIGHT = 0x02,
 		UP = 0x04,
+	};
+
+	enum class CollisionState {
+		NONE = 0,
+		LEFT = 0x01,
+		RIGHT = 0x02,
+		TOP = 0x04,
+		BOTTOM = 0x08,
+
+		SCREENLEFT = 0x10,
+		SCREENRIGHT = 0x20,
+		SCREENTOP = 0x40,
+		SCREENBOTTOM = 0x80,
 	};
 
 	int control_flags_;
@@ -77,7 +90,7 @@ public:
 	void RenderGround();
 	void RenderPlayer();
 
-	bool MoveWithCollision(DynamicObject& object, float delta_time);
+	int MoveWithCollision(DynamicObject& object, float delta_time);
 };
 
 #endif // GAMESCENE_HH

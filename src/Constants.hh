@@ -40,6 +40,14 @@ enum SpriteNames {
 
 static const float GForce = 100.0f;
 
+static const float JumpImpulse = 58.0f;
+
+static const float WalkAccel = 300.0f;
+static const float WalkDecel = WalkAccel*2;
+static const float WalkMaxSpeed = 40.0f;
+
+static const float AirControlRate = 0.2f;
+
 static const SDL2pp::Rect SpriteData[NUM_SPRITES] = {
 	{ 19, 1, 16, 16 },  // GROUND
 	{ 1, 237, 8, 18 },  // PLAYER
