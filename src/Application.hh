@@ -21,6 +21,7 @@
 #define APPLICATION_HH
 
 #include <string>
+#include <memory>
 
 #include <SDL2pp/SDL.hh>
 #include <SDL2pp/Window.hh>
