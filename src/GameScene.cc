@@ -120,7 +120,7 @@ void GameScene::Render() {
 void GameScene::RenderGround() {
 	for (int y = 0; y < SCREEN_HEIGHT_TILES; y++)
 		for (int x = 0; x < SCREEN_WIDTH_TILES; x++)
-			if (screen_tiles_[x + y * SCREEN_WIDTH_TILES] == 2)
+			if (screen_tiles_[x + y * SCREEN_WIDTH_TILES] == TileType::GROUND)
 				painter_.Copy(SpriteData[SPRITE_GROUND], SDL2pp::Point(x * TILE_SIZE, y * TILE_SIZE));
 }
 
@@ -163,7 +163,7 @@ int GameScene::MoveWithCollision(GameScene::DynamicObject& object, float delta_t
 					result |= (int)CollisionState::TOP;
 				} else if (y >= SCREEN_HEIGHT_TILES) {
 					result |= (int)CollisionState::BOTTOM;
-				} else if (screen_tiles_[x + y * SCREEN_WIDTH_TILES] == 2) {
+				} else if (!screen_tiles_[x + y * SCREEN_WIDTH_TILES].IsPassable()) {
 					SDL2pp::Rect ground_rect(x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
 
 					if (SDL2pp::Rect(int_x, int_y - 1, object.width, 1).Intersects(ground_rect))

@@ -17,29 +17,33 @@
  * along with planetonomy.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef GAMEMAP_HH
-#define GAMEMAP_HH
+#ifndef TILETYPE_HH
+#define TILETYPE_HH
 
-#include <string>
-#include <vector>
-#include <array>
+class TileType {
+public:
+	enum Type {
+		EMPTY = 0,
+		GROUND = 2,
+	};
 
-#include "Constants.hh"
-#include "TileType.hh"
-
-class GameMap {
-protected:
-	std::vector<TileType> map_data_;
-	unsigned int width_;
-	unsigned int height_;
+private:
+	Type type_;
 
 public:
-	typedef std::array<TileType, SCREEN_WIDTH_TILES * SCREEN_HEIGHT_TILES> ScreenTileData;
+	TileType() : type_(EMPTY) {
+	}
 
-public:
-	GameMap(const std::string& tmxpath);
+	TileType(int type) : type_(static_cast<Type>(type)) {
+	}
 
-	ScreenTileData GetScreenTileData(int x, int y);
+	bool IsPassable() const {
+		return type_ == EMPTY;
+	}
+
+	bool operator==(Type type) const {
+		return type_ == type;
+	}
 };
 
-#endif // GAMEMAP_HH
+#endif // TILETYPE_HH
