@@ -26,12 +26,14 @@
 
 #include "Scene.hh"
 #include "LowresPainter.hh"
+#include "GameMap.hh"
 
 #include "Constants.hh"
 
 class GameScene : public Scene {
 private:
 	SDL2pp::Texture tiles_;
+	GameMap game_map_;
 
 	LowresPainter painter_;
 
