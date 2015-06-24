@@ -58,7 +58,7 @@ GameMap::GameMap(const std::string& tmxpath) {
 TileType GameMap::GetTile(int x, int y) const {
 	// for out-of-bounds data return full tile to prevent player
 	// from leaving the map
-	if (x < 0 || y < 0 || x >= width_ || y >= height_)
+	if (x < 0 || y < 0 || (unsigned int)x >= width_ || (unsigned int)y >= height_)
 		return TileType::DefaultFull();
 
 	return map_data_[y * width_ + x];
