@@ -32,6 +32,14 @@ private:
 	Type type_;
 
 public:
+	static TileType DefaultEmpty() {
+		return TileType(EMPTY);
+	}
+
+	static TileType DefaultFull() {
+		return TileType(GROUND);
+	}
+
 	TileType() : type_(EMPTY) {
 	}
 
@@ -44,6 +52,10 @@ public:
 
 	bool operator==(Type type) const {
 		return type_ == type;
+	}
+
+	Type GetType() const {
+		return type_;
 	}
 };
 
