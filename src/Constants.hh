@@ -34,6 +34,7 @@ enum GameConstants {
 enum SpriteNames {
 	SPRITE_GROUND,
 	SPRITE_PLAYER,
+	SPRITE_FIXME,
 
 	NUM_SPRITES
 };
@@ -51,6 +52,7 @@ static const float AirControlRate = 0.2f;
 static const SDL2pp::Rect SpriteData[NUM_SPRITES] = {
 	{ 19, 1, 16, 16 },  // GROUND
 	{ 1, 237, 8, 18 },  // PLAYER
+	{ 37, 1, 16, 16 },  // FIXME
 };
 
 #endif // CONSTANTS_HH

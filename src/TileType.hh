@@ -25,6 +25,7 @@ public:
 	enum Type {
 		EMPTY = 0,
 		GROUND = 2,
+		FIXME = 3,
 	};
 
 private:
