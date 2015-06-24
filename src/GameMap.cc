@@ -55,13 +55,19 @@ GameMap::GameMap(const std::string& tmxpath) {
 		throw std::runtime_error("cannot process map file");
 }
 
-GameMap::ScreenTileData GameMap::GetScreenTileData(int x, int y) {
-	GameMap::ScreenTileData result;
+TileType GameMap::GetTile(int x, int y) const {
+	// for out-of-bounds data return full tile to prevent player
+	// from leaving the map
+	if (x < 0 || y < 0 || x >= width_ || y >= height_)
+		return TileType::DefaultFull();
 
-	int target_index = 0;
-	for (int row = y * SCREEN_HEIGHT_TILES; row < y * SCREEN_HEIGHT_TILES + SCREEN_HEIGHT_TILES; row++)
-		for (int column = x * SCREEN_WIDTH_TILES; column < x * SCREEN_WIDTH_TILES + SCREEN_WIDTH_TILES; column++)
-			result[target_index++] = map_data_[row * width_ + column];
+	return map_data_[y * width_ + x];
+}
 
-	return result;
+unsigned int GameMap::GetWidth() const {
+	return width_;
+}
+
+unsigned int GameMap::GetHeight() const {
+	return height_;
 }

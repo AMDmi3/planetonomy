@@ -29,9 +29,7 @@ GameScene::GameScene(Application& app)
 	  game_map_(DATADIR "/maps/planetonomy.tmx"),
 	  painter_(GetRenderer(), tiles_, SCREEN_WIDTH_PIXELS, SCREEN_HEIGHT_PIXELS),
 	  prev_frame_time_(SDL_GetTicks()),
-	  player_(0, SCREEN_HEIGHT_PIXELS / 2.0f, SpriteData[SPRITE_PLAYER].w, SpriteData[SPRITE_PLAYER].h) {
-    screen_tiles_ = game_map_.GetScreenTileData(1, 1);
-
+	  player_(SCREEN_WIDTH_PIXELS, SCREEN_HEIGHT_PIXELS + SCREEN_HEIGHT_PIXELS / 2.0f, SpriteData[SPRITE_PLAYER].w, SpriteData[SPRITE_PLAYER].h) {
 	control_flags_ = 0;
 
 	painter_.UpdateSize();
@@ -118,14 +116,27 @@ void GameScene::Render() {
 }
 
 void GameScene::RenderGround() {
-	for (int y = 0; y < SCREEN_HEIGHT_TILES; y++)
-		for (int x = 0; x < SCREEN_WIDTH_TILES; x++)
-			if (screen_tiles_[x + y * SCREEN_WIDTH_TILES] == TileType::GROUND)
+	int screen_x = (int)player_.x / (SCREEN_WIDTH_TILES * TILE_SIZE);
+	int screen_y = (int)player_.y / (SCREEN_HEIGHT_TILES * TILE_SIZE);
+
+	for (int y = 0; y < SCREEN_HEIGHT_TILES; y++) {
+		for (int x = 0; x < SCREEN_WIDTH_TILES; x++) {
+			switch (game_map_.GetTile(screen_x * SCREEN_WIDTH_TILES + x, screen_y * SCREEN_HEIGHT_TILES + y).GetType()) {
+			case TileType::GROUND:
 				painter_.Copy(SpriteData[SPRITE_GROUND], SDL2pp::Point(x * TILE_SIZE, y * TILE_SIZE));
+				break;
+			case TileType::FIXME:
+				painter_.Copy(SpriteData[SPRITE_FIXME], SDL2pp::Point(x * TILE_SIZE, y * TILE_SIZE));
+				break;
+			default:
+				break;
+			}
+		}
+	}
 }
 
 void GameScene::RenderPlayer() {
-	painter_.Copy(SpriteData[SPRITE_PLAYER], SDL2pp::Point(player_.x, player_.y));
+	painter_.Copy(SpriteData[SPRITE_PLAYER], SDL2pp::Point((int)player_.x % (SCREEN_WIDTH_TILES * TILE_SIZE), (int)player_.y % (SCREEN_HEIGHT_TILES * TILE_SIZE)));
 }
 
 int GameScene::MoveWithCollision(GameScene::DynamicObject& object, float delta_time) {
@@ -144,26 +155,16 @@ int GameScene::MoveWithCollision(GameScene::DynamicObject& object, float delta_t
 				object.height + 2
 			);
 
+		// this + std::max() in the loops below to avoid signed math
+		// problems with negative tile coordinates
 		if (coll_rect.GetX() < 0)
-			result |= (int)CollisionState::LEFT | (int)CollisionState::SCREENLEFT;
+			result |= (int)CollisionState::LEFT;
 		if (coll_rect.GetY() < 0)
-			result |= (int)CollisionState::TOP | (int)CollisionState::SCREENTOP;
-		if (coll_rect.GetX2() >= SCREEN_WIDTH_TILES * TILE_SIZE)
-			result |= (int)CollisionState::RIGHT | (int)CollisionState::SCREENRIGHT;
-		if (coll_rect.GetY2() >= SCREEN_HEIGHT_TILES * TILE_SIZE)
-			result |= (int)CollisionState::BOTTOM | (int)CollisionState::SCREENBOTTOM;
+			result |= (int)CollisionState::TOP;
 
-		for (int y = std::max(coll_rect.y / TILE_SIZE, 0); y <= std::min(coll_rect.GetY2() / TILE_SIZE, SCREEN_HEIGHT_TILES - 1); y++) {
-			for (int x = std::max(coll_rect.x / TILE_SIZE, 0); x <= std::min(coll_rect.GetX2() / TILE_SIZE, SCREEN_WIDTH_TILES - 1); x++) {
-				if (x < 0) {
-					result |= (int)CollisionState::LEFT;
-				} else if (x >= SCREEN_WIDTH_TILES) {
-					result |= (int)CollisionState::RIGHT;
-				} else if (y < 0) {
-					result |= (int)CollisionState::TOP;
-				} else if (y >= SCREEN_HEIGHT_TILES) {
-					result |= (int)CollisionState::BOTTOM;
-				} else if (!screen_tiles_[x + y * SCREEN_WIDTH_TILES].IsPassable()) {
+		for (int y = std::max(coll_rect.y / TILE_SIZE, 0); y <= coll_rect.GetY2() / TILE_SIZE; y++) {
+			for (int x = std::max(coll_rect.x / TILE_SIZE, 0); x <= coll_rect.GetX2() / TILE_SIZE; x++) {
+				if (!game_map_.GetTile(x, y).IsPassable()) {
 					SDL2pp::Rect ground_rect(x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
 
 					if (SDL2pp::Rect(int_x, int_y - 1, object.width, 1).Intersects(ground_rect))

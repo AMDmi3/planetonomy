@@ -57,8 +57,6 @@ private:
 private:
 	unsigned int prev_frame_time_;
 
-	GameMap::ScreenTileData screen_tiles_;
-
 	DynamicObject player_;
 
 	enum class ControlFlags {

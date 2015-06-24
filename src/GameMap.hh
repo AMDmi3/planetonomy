@@ -22,7 +22,6 @@
 
 #include <string>
 #include <vector>
-#include <array>
 
 #include "Constants.hh"
 #include "TileType.hh"
@@ -34,12 +33,12 @@ protected:
 	unsigned int height_;
 
 public:
-	typedef std::array<TileType, SCREEN_WIDTH_TILES * SCREEN_HEIGHT_TILES> ScreenTileData;
-
-public:
 	GameMap(const std::string& tmxpath);
 
-	ScreenTileData GetScreenTileData(int x, int y);
+	TileType GetTile(int x, int y) const;
+
+	unsigned int GetWidth() const;
+	unsigned int GetHeight() const;
 };
 
 #endif // GAMEMAP_HH
