@@ -30,30 +30,7 @@ GameScene::GameScene(Application& app)
 	  painter_(GetRenderer(), tiles_, SCREEN_WIDTH_PIXELS, SCREEN_HEIGHT_PIXELS),
 	  prev_frame_time_(SDL_GetTicks()),
 	  player_(0, SCREEN_HEIGHT_PIXELS / 2.0f, SpriteData[SPRITE_PLAYER].w, SpriteData[SPRITE_PLAYER].h) {
-	std::fill(ground_.begin(), ground_.end(), false);
-	for (int x = 0; x < SCREEN_WIDTH_TILES; x++)
-		ground_[x + SCREEN_WIDTH_TILES * (SCREEN_HEIGHT_TILES - 1)] = true;
-
-	ground_[0 + SCREEN_WIDTH_TILES * (SCREEN_HEIGHT_TILES - 1 - 1)] = true;
-	ground_[1 + SCREEN_WIDTH_TILES * (SCREEN_HEIGHT_TILES - 1 - 1)] = true;
-	ground_[2 + SCREEN_WIDTH_TILES * (SCREEN_HEIGHT_TILES - 1 - 1)] = true;
-
-	ground_[6 + SCREEN_WIDTH_TILES * (SCREEN_HEIGHT_TILES - 1 - 1)] = true;
-	ground_[7 + SCREEN_WIDTH_TILES * (SCREEN_HEIGHT_TILES - 1 - 1)] = true;
-	ground_[7 + SCREEN_WIDTH_TILES * (SCREEN_HEIGHT_TILES - 1 - 2)] = true;
-
-	ground_[8 + SCREEN_WIDTH_TILES * (SCREEN_HEIGHT_TILES - 1)] = false;
-	ground_[9 + SCREEN_WIDTH_TILES * (SCREEN_HEIGHT_TILES - 1)] = false;
-	ground_[10 + SCREEN_WIDTH_TILES * (SCREEN_HEIGHT_TILES - 1)] = false;
-	ground_[11 + SCREEN_WIDTH_TILES * (SCREEN_HEIGHT_TILES - 1)] = false;
-
-	ground_[12 + SCREEN_WIDTH_TILES * (SCREEN_HEIGHT_TILES - 1 - 2)] = true;
-	ground_[12 + SCREEN_WIDTH_TILES * (SCREEN_HEIGHT_TILES - 1 - 1)] = true;
-	ground_[13 + SCREEN_WIDTH_TILES * (SCREEN_HEIGHT_TILES - 1 - 1)] = true;
-
-	ground_[17 + SCREEN_WIDTH_TILES * (SCREEN_HEIGHT_TILES - 1 - 1)] = true;
-	ground_[18 + SCREEN_WIDTH_TILES * (SCREEN_HEIGHT_TILES - 1 - 1)] = true;
-	ground_[19 + SCREEN_WIDTH_TILES * (SCREEN_HEIGHT_TILES - 1 - 1)] = true;
+    screen_tiles_ = game_map_.GetScreenTileData(1, 1);
 
 	control_flags_ = 0;
 
@@ -143,7 +120,7 @@ void GameScene::Render() {
 void GameScene::RenderGround() {
 	for (int y = 0; y < SCREEN_HEIGHT_TILES; y++)
 		for (int x = 0; x < SCREEN_WIDTH_TILES; x++)
-			if (ground_[x + y * SCREEN_WIDTH_TILES])
+			if (screen_tiles_[x + y * SCREEN_WIDTH_TILES] == 2)
 				painter_.Copy(SpriteData[SPRITE_GROUND], SDL2pp::Point(x * TILE_SIZE, y * TILE_SIZE));
 }
 
@@ -186,7 +163,7 @@ int GameScene::MoveWithCollision(GameScene::DynamicObject& object, float delta_t
 					result |= (int)CollisionState::TOP;
 				} else if (y >= SCREEN_HEIGHT_TILES) {
 					result |= (int)CollisionState::BOTTOM;
-				} else if (ground_[x + y * SCREEN_WIDTH_TILES]) {
+				} else if (screen_tiles_[x + y * SCREEN_WIDTH_TILES] == 2) {
 					SDL2pp::Rect ground_rect(x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
 
 					if (SDL2pp::Rect(int_x, int_y - 1, object.width, 1).Intersects(ground_rect))

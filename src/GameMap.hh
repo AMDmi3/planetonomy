@@ -22,15 +22,23 @@
 
 #include <string>
 #include <vector>
+#include <array>
+
+#include "Constants.hh"
 
 class GameMap {
 protected:
-	std::vector<bool> map_data_;
-	int width_;
-	int height_;
+	std::vector<int> map_data_;
+	unsigned int width_;
+	unsigned int height_;
+
+public:
+	typedef std::array<int, SCREEN_WIDTH_TILES * SCREEN_HEIGHT_TILES> ScreenTileData;
 
 public:
 	GameMap(const std::string& tmxpath);
+
+	ScreenTileData GetScreenTileData(int x, int y);
 };
 
 #endif // GAMEMAP_HH

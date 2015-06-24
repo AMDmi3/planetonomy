@@ -32,7 +32,7 @@ GameMap::GameMap(const std::string& tmxpath) {
 	height_ = map.attribute("height").as_int();
 	std::string map_csv = map.child("layer").child_value("data");
 
-	if (width_ <= 0 || height_ <= 0 || map_csv.empty())
+	if (width_ == 0 || height_ == 0 || map_csv.empty())
 		throw std::runtime_error("cannot process map file");
 
 	map_data_.reserve(width_ * height_);
@@ -53,4 +53,15 @@ GameMap::GameMap(const std::string& tmxpath) {
 
 	if (map_data_.size() != width_ * height_)
 		throw std::runtime_error("cannot process map file");
+}
+
+GameMap::ScreenTileData GameMap::GetScreenTileData(int x, int y) {
+	GameMap::ScreenTileData result;
+
+	int target_index = 0;
+	for (int row = y * SCREEN_HEIGHT_TILES; row < y * SCREEN_HEIGHT_TILES + SCREEN_HEIGHT_TILES; row++)
+		for (int column = x * SCREEN_WIDTH_TILES; column < x * SCREEN_WIDTH_TILES + SCREEN_WIDTH_TILES; column++)
+			result[target_index++] = map_data_[row * width_ + column];
+
+	return result;
 }

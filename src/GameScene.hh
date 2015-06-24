@@ -57,7 +57,7 @@ private:
 private:
 	unsigned int prev_frame_time_;
 
-	std::array<bool, SCREEN_WIDTH_TILES * SCREEN_HEIGHT_TILES> ground_;
+	GameMap::ScreenTileData screen_tiles_;
 
 	DynamicObject player_;
 
