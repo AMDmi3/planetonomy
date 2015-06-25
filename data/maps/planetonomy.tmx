@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" orientation="orthogonal" renderorder="right-down" width="120" height="84" tilewidth="16" tileheight="16" backgroundcolor="#7f7f7f" nextobjectid="46">
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="120" height="84" tilewidth="16" tileheight="16" backgroundcolor="#7f7f7f" nextobjectid="53">
  <tileset firstgid="1" name="Tiles" tilewidth="16" tileheight="16" spacing="2" margin="1">
   <image source="../images/tiles.png" width="256" height="256"/>
   <tile id="1">
@@ -97,35 +97,35 @@
  <objectgroup name="Screens">
   <object id="2" x="0" y="0" width="320" height="192"/>
   <object id="4" x="320" y="0" width="320" height="192"/>
-  <object id="5" x="640" y="0" width="320" height="192"/>
-  <object id="6" x="960" y="0" width="320" height="192"/>
-  <object id="7" x="1280" y="0" width="320" height="192"/>
-  <object id="8" x="1600" y="0" width="320" height="192"/>
-  <object id="9" x="1600" y="384" width="320" height="192"/>
-  <object id="10" x="1600" y="192" width="320" height="192"/>
-  <object id="11" x="1600" y="576" width="320" height="192"/>
-  <object id="12" x="1600" y="768" width="320" height="192"/>
-  <object id="13" x="1600" y="960" width="320" height="192"/>
-  <object id="14" x="1600" y="1152" width="320" height="192"/>
-  <object id="15" x="640" y="192" width="320" height="192"/>
-  <object id="16" x="320" y="192" width="320" height="192"/>
-  <object id="17" x="1280" y="192" width="320" height="192"/>
-  <object id="18" x="960" y="192" width="320" height="192"/>
+  <object id="5" name="Ledge" x="640" y="0" width="320" height="192"/>
+  <object id="6" name="Surface" x="960" y="0" width="320" height="192"/>
+  <object id="7" name="Surface" x="1280" y="0" width="320" height="192"/>
+  <object id="8" name="???" x="1600" y="0" width="320" height="192"/>
+  <object id="9" name="Esophagus 1" x="1600" y="384" width="320" height="192"/>
+  <object id="10" name="Tongue chamber" x="1600" y="192" width="320" height="192"/>
+  <object id="11" name="Bowel entrance" x="1600" y="576" width="320" height="192"/>
+  <object id="12" name="Bowel 1" x="1600" y="768" width="320" height="192"/>
+  <object id="13" name="Bowel 2" x="1600" y="960" width="320" height="192"/>
+  <object id="14" name="Bowel 3" x="1600" y="1152" width="320" height="192"/>
+  <object id="15" name="Cave entrance" x="640" y="192" width="320" height="192"/>
+  <object id="16" name="Breathing orifice" x="320" y="192" width="320" height="192"/>
+  <object id="17" name="Mouth 2" x="1280" y="192" width="320" height="192"/>
+  <object id="18" name="Mouth 1" x="960" y="192" width="320" height="192"/>
   <object id="19" name="Landing site" x="0" y="192" width="320" height="192"/>
-  <object id="20" x="640" y="384" width="320" height="192"/>
+  <object id="20" name="Esophagus 4" x="640" y="384" width="320" height="192"/>
   <object id="21" x="320" y="384" width="320" height="192"/>
-  <object id="22" x="1280" y="384" width="320" height="192"/>
-  <object id="23" x="960" y="384" width="320" height="192"/>
+  <object id="22" name="Esophagus 2" x="1280" y="384" width="320" height="192"/>
+  <object id="23" name="Esophagus 3" x="960" y="384" width="320" height="192"/>
   <object id="24" x="0" y="384" width="320" height="192"/>
-  <object id="25" x="640" y="576" width="320" height="192"/>
+  <object id="25" name="Esophagus 5" x="640" y="576" width="320" height="192"/>
   <object id="26" x="320" y="576" width="320" height="192"/>
-  <object id="27" x="1280" y="576" width="320" height="192"/>
-  <object id="28" x="960" y="576" width="320" height="192"/>
+  <object id="27" name="Stomach 4" x="1280" y="576" width="320" height="192"/>
+  <object id="28" name="Stomach 1" x="960" y="576" width="320" height="192"/>
   <object id="29" x="0" y="576" width="320" height="192"/>
   <object id="30" x="640" y="768" width="320" height="192"/>
   <object id="31" x="320" y="768" width="320" height="192"/>
-  <object id="32" x="1280" y="768" width="320" height="192"/>
-  <object id="33" x="960" y="768" width="320" height="192"/>
+  <object id="32" name="Stomach 3" x="1280" y="768" width="320" height="192"/>
+  <object id="33" name="Stomach 2" x="960" y="768" width="320" height="192"/>
   <object id="34" x="0" y="768" width="320" height="192"/>
   <object id="35" x="640" y="960" width="320" height="192"/>
   <object id="36" x="320" y="960" width="320" height="192"/>
@@ -137,5 +137,10 @@
   <object id="42" x="1280" y="1152" width="320" height="192"/>
   <object id="43" x="960" y="1152" width="320" height="192"/>
   <object id="44" x="0" y="1152" width="320" height="192"/>
+ </objectgroup>
+ <objectgroup name="Objects">
+  <object id="47" type="lander" x="48" y="336" width="32" height="32"/>
+  <object id="48" type="player_start" x="96" y="352" width="16" height="16"/>
+  <object id="50" type="airflow" x="448" y="288" width="64" height="176"/>
  </objectgroup>
 </map>
