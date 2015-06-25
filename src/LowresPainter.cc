@@ -44,3 +44,7 @@ void LowresPainter::UpdateSize() {
 void LowresPainter::Copy(const SDL2pp::Rect& src, const SDL2pp::Point& dst) {
 	renderer_.Copy(tiles_, src, SDL2pp::Rect(offset_.x + dst.x * scale_factor_, offset_.y + dst.y * scale_factor_, src.w * scale_factor_, src.h * scale_factor_));
 }
+
+void LowresPainter::Clear() {
+	renderer_.FillRect(SDL2pp::Rect(offset_.x, offset_.y, screen_width_ * scale_factor_, screen_height_ * scale_factor_));
+}

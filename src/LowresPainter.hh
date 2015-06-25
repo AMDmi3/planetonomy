@@ -40,6 +40,7 @@ public:
 
 	void UpdateSize();
 	void Copy(const SDL2pp::Rect& src, const SDL2pp::Point& dst);
+	void Clear();
 };
 
 #endif // LOWRESPAINTER_HH

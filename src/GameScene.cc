@@ -108,8 +108,11 @@ void GameScene::Update() {
 }
 
 void GameScene::Render() {
-	GetRenderer().SetDrawColor(0, 0, 0);
+	GetRenderer().SetDrawColor(16, 16, 16);
 	GetRenderer().Clear();
+
+	GetRenderer().SetDrawColor(0, 0, 0);
+	painter_.Clear();
 
 	RenderGround();
 	RenderPlayer();
