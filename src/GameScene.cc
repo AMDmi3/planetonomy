@@ -35,6 +35,9 @@ GameScene::GameScene(Application& app)
 		  ) {
 	control_flags_ = 0;
 
+	player_.collision_rect.y += 3;
+	player_.collision_rect.h -= 3;
+
 	painter_.UpdateSize();
 }
 
