@@ -37,8 +37,8 @@ GameMap::GameMap(const std::string& tmxpath) {
 
 	map_data_.reserve(width_ * height_);
 
-	int curint = 0;
-	int curlen = 0;
+	unsigned int curint = 0;
+	unsigned int curlen = 0;
 	for (auto& ch : map_csv) {
 		if (ch >= '0' && ch <= '9') {
 			curint = curint * 10 + ch - '0';

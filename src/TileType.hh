@@ -28,8 +28,14 @@ public:
 		FIXME = 3,
 	};
 
+	enum FlipFlags {
+		DFLIP = 0x2,
+		VFLIP = 0x4,
+		HFLIP = 0x8,
+	};
+
 private:
-	Type type_;
+	int data_; // as stored by tiled
 
 public:
 	static TileType DefaultEmpty() {
@@ -40,22 +46,22 @@ public:
 		return TileType(GROUND);
 	}
 
-	TileType() : type_(EMPTY) {
+	TileType() : data_(EMPTY) {
 	}
 
-	TileType(int type) : type_(static_cast<Type>(type)) {
+	TileType(unsigned int data) : data_(data) {
 	}
 
 	bool IsPassable() const {
-		return type_ == EMPTY;
-	}
-
-	bool operator==(Type type) const {
-		return type_ == type;
+		return GetType() == EMPTY;
 	}
 
 	Type GetType() const {
-		return type_;
+		return static_cast<Type>(data_ & 0xfffffff);
+	}
+
+	int GetFlipFlag() const {
+		return data_ >> 28;
 	}
 };
 
