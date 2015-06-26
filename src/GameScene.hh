@@ -44,13 +44,20 @@ private:
 		float xvel;
 		float yvel;
 
-		int width;
-		int height;
+		SDL2pp::Rect rect;
 
-		DynamicObject(int x, int y, int width, int height)
+		DynamicObject(int x, int y, const SDL2pp::Rect& rect)
 			: x(x), y(y),
 			  xvel(0), yvel(0),
-			  width(width), height(height) {
+			  rect(rect) {
+		}
+
+		SDL2pp::Point GetPoint() const {
+			return SDL2pp::Point((int)x, (int)y);
+		}
+
+		SDL2pp::Rect GetRect() const {
+			return rect + GetPoint();
 		}
 	};
 
@@ -87,8 +94,8 @@ public:
 	virtual void Update() override;
 	virtual void Render() override;
 
-	void RenderGround();
-	void RenderPlayer();
+	void RenderGround(const SDL2pp::Point& offset);
+	void RenderPlayer(const SDL2pp::Point& offset);
 
 	int MoveWithCollision(DynamicObject& object, float delta_time);
 };

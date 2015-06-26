@@ -29,7 +29,10 @@ GameScene::GameScene(Application& app)
 	  game_map_(DATADIR "/maps/planetonomy.tmx"),
 	  painter_(GetRenderer(), tiles_, SCREEN_WIDTH_PIXELS, SCREEN_HEIGHT_PIXELS),
 	  prev_frame_time_(SDL_GetTicks()),
-	  player_(SCREEN_WIDTH_PIXELS, SCREEN_HEIGHT_PIXELS + SCREEN_HEIGHT_PIXELS / 2.0f, SpriteData[SPRITE_PLAYER].w, SpriteData[SPRITE_PLAYER].h) {
+	  player_(SCREEN_WIDTH_PIXELS,
+			  SCREEN_HEIGHT_PIXELS + SCREEN_HEIGHT_PIXELS / 2.0f,
+			  SDL2pp::Rect(-SpriteData[SPRITE_PLAYER].w / 2, -SpriteData[SPRITE_PLAYER].h + 1, SpriteData[SPRITE_PLAYER].w, SpriteData[SPRITE_PLAYER].h)
+		  ) {
 	control_flags_ = 0;
 
 	painter_.UpdateSize();
@@ -114,17 +117,19 @@ void GameScene::Render() {
 	GetRenderer().SetDrawColor(0, 0, 0);
 	painter_.Clear();
 
-	RenderGround();
-	RenderPlayer();
+	SDL2pp::Point screen_offset{
+		player_.GetPoint().x / (SCREEN_WIDTH_TILES * TILE_SIZE) * (SCREEN_WIDTH_TILES * TILE_SIZE),
+		player_.GetPoint().y / (SCREEN_HEIGHT_TILES * TILE_SIZE) * (SCREEN_HEIGHT_TILES * TILE_SIZE)
+	};
+
+	RenderGround(screen_offset);
+	RenderPlayer(screen_offset);
 }
 
-void GameScene::RenderGround() {
-	int screen_x = (int)player_.x / (SCREEN_WIDTH_TILES * TILE_SIZE);
-	int screen_y = (int)player_.y / (SCREEN_HEIGHT_TILES * TILE_SIZE);
-
+void GameScene::RenderGround(const SDL2pp::Point& offset) {
 	for (int y = 0; y < SCREEN_HEIGHT_TILES; y++) {
 		for (int x = 0; x < SCREEN_WIDTH_TILES; x++) {
-			TileType tt = game_map_.GetTile(screen_x * SCREEN_WIDTH_TILES + x, screen_y * SCREEN_HEIGHT_TILES + y);
+			TileType tt = game_map_.GetTile(offset.x / TILE_SIZE + x, offset.y / TILE_SIZE + y);
 
 			int flipflag = 0;
 			double angle = 0.0;
@@ -137,7 +142,7 @@ void GameScene::RenderGround() {
 			}
 
 			int sprite_to_render = -1;
-			switch (game_map_.GetTile(screen_x * SCREEN_WIDTH_TILES + x, screen_y * SCREEN_HEIGHT_TILES + y).GetType()) {
+			switch (tt.GetType()) {
 			case TileType::EMPTY:  break;
 			case TileType::GROUND: sprite_to_render = SPRITE_GROUND; break;
 			case TileType::FIXME:  sprite_to_render = SPRITE_FIXME; break;
@@ -150,8 +155,14 @@ void GameScene::RenderGround() {
 	}
 }
 
-void GameScene::RenderPlayer() {
-	painter_.Copy(SpriteData[SPRITE_PLAYER], SDL2pp::Point((int)player_.x % (SCREEN_WIDTH_TILES * TILE_SIZE), (int)player_.y % (SCREEN_HEIGHT_TILES * TILE_SIZE)));
+void GameScene::RenderPlayer(const SDL2pp::Point& offset) {
+	painter_.Copy(
+			SpriteData[SPRITE_PLAYER],
+			SDL2pp::Point(
+				(int)player_.GetRect().x - offset.x,
+				(int)player_.GetRect().y - offset.y
+			)
+		);
 }
 
 int GameScene::MoveWithCollision(GameScene::DynamicObject& object, float delta_time) {
@@ -163,12 +174,14 @@ int GameScene::MoveWithCollision(GameScene::DynamicObject& object, float delta_t
 		int int_x = (int)object.x;
 		int int_y = (int)object.y;
 
-		SDL2pp::Rect coll_rect(
-				int_x - 1,
-				int_y - 1,
-				object.width + 2,
-				object.height + 2
-			);
+		// collision rectangle
+		SDL2pp::Rect coll_rect = { object.rect.x + int_x - 1, object.rect.y + int_y - 1, object.rect.w + 2, object.rect.h + 2 };
+
+		// side collision rectangles
+		SDL2pp::Rect left_rect = { object.rect.x + int_x - 1, object.rect.y + int_y - 1, 1, object.rect.h };
+		SDL2pp::Rect right_rect = { object.rect.x + int_x + object.rect.w, object.rect.y + int_y - 1, 1, object.rect.h };
+		SDL2pp::Rect top_rect = { object.rect.x + int_x - 1, object.rect.y + int_y - 1, object.rect.w, 1 };
+		SDL2pp::Rect bottom_rect = { object.rect.x + int_x - 1, object.rect.y + int_y + object.rect.h, object.rect.w, 1 };
 
 		// this + std::max() in the loops below to avoid signed math
 		// problems with negative tile coordinates
@@ -182,13 +195,13 @@ int GameScene::MoveWithCollision(GameScene::DynamicObject& object, float delta_t
 				if (!game_map_.GetTile(x, y).IsPassable()) {
 					SDL2pp::Rect ground_rect(x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
 
-					if (SDL2pp::Rect(int_x, int_y - 1, object.width, 1).Intersects(ground_rect))
+					if (top_rect.Intersects(ground_rect))
 						result |= (int)CollisionState::TOP;
-					if (SDL2pp::Rect(int_x - 1, int_y, 1, object.height).Intersects(ground_rect))
+					if (left_rect.Intersects(ground_rect))
 						result |= (int)CollisionState::LEFT;
-					if (SDL2pp::Rect(int_x, int_y + object.height, object.width, 1).Intersects(ground_rect))
+					if (bottom_rect.Intersects(ground_rect))
 						result |= (int)CollisionState::BOTTOM;
-					if (SDL2pp::Rect(int_x + object.width, int_y, 1, object.height).Intersects(ground_rect))
+					if (right_rect.Intersects(ground_rect))
 						result |= (int)CollisionState::RIGHT;
 				}
 			}
