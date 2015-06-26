@@ -111,9 +111,14 @@ void GameScene::Update() {
 }
 
 void GameScene::Render() {
+	// clear whole window to make actualy rendering area visible
+	SDL2pp::Rect clip = GetRenderer().GetClipRect();
+	GetRenderer().SetClipRect();
 	GetRenderer().SetDrawColor(16, 16, 16);
 	GetRenderer().Clear();
+	GetRenderer().SetClipRect(clip);
 
+	// low-res rendering starts
 	GetRenderer().SetDrawColor(0, 0, 0);
 	painter_.Clear();
 
