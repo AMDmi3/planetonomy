@@ -132,10 +132,11 @@ void GameScene::Render() {
 }
 
 void GameScene::RenderGround(const SDL2pp::Point& offset) {
-	for (int y = 0; y < SCREEN_HEIGHT_TILES; y++) {
+	for (int y = 0; y < (SCREEN_HEIGHT_PIXELS + TILE_SIZE - 1) / TILE_SIZE; y++) {
 		for (int x = 0; x < SCREEN_WIDTH_TILES; x++) {
 			TileType tt = game_map_.GetTile(offset.x / TILE_SIZE + x, offset.y / TILE_SIZE + y);
 
+			// handle tiled's flipping flags
 			int flipflag = 0;
 			double angle = 0.0;
 			if (tt.IsDFlipped()) {
@@ -146,6 +147,7 @@ void GameScene::RenderGround(const SDL2pp::Point& offset) {
 				angle = 0.0;
 			}
 
+			// select tile sprite to render
 			int sprite_to_render = -1;
 			switch (tt.GetType()) {
 			case TileType::EMPTY:  break;
