@@ -125,6 +125,8 @@ void GameScene::RenderGround() {
 	for (int y = 0; y < SCREEN_HEIGHT_TILES; y++) {
 		for (int x = 0; x < SCREEN_WIDTH_TILES; x++) {
 			switch (game_map_.GetTile(screen_x * SCREEN_WIDTH_TILES + x, screen_y * SCREEN_HEIGHT_TILES + y).GetType()) {
+			case TileType::EMPTY:
+				break;
 			case TileType::GROUND:
 				painter_.Copy(SpriteData[SPRITE_GROUND], SDL2pp::Point(x * TILE_SIZE, y * TILE_SIZE));
 				break;
@@ -132,6 +134,7 @@ void GameScene::RenderGround() {
 				painter_.Copy(SpriteData[SPRITE_FIXME], SDL2pp::Point(x * TILE_SIZE, y * TILE_SIZE));
 				break;
 			default:
+				painter_.Copy(SpriteData[SPRITE_FIXME], SDL2pp::Point(x * TILE_SIZE, y * TILE_SIZE));
 				break;
 			}
 		}
