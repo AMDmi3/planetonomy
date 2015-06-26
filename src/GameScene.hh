@@ -45,11 +45,13 @@ private:
 		float yvel;
 
 		SDL2pp::Rect rect;
+		SDL2pp::Rect collision_rect;
 
 		DynamicObject(int x, int y, const SDL2pp::Rect& rect)
 			: x(x), y(y),
 			  xvel(0), yvel(0),
-			  rect(rect) {
+			  rect(rect),
+			  collision_rect(rect) {
 		}
 
 		SDL2pp::Point GetPoint() const {
@@ -58,6 +60,10 @@ private:
 
 		SDL2pp::Rect GetRect() const {
 			return rect + GetPoint();
+		}
+
+		SDL2pp::Rect GetCollisionRect() const {
+			return collision_rect + GetPoint();
 		}
 	};
 
