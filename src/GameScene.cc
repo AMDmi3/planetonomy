@@ -178,14 +178,16 @@ int GameScene::MoveWithCollision(GameScene::DynamicObject& object, float delta_t
 
 	int result = (int)CollisionState::NONE;
 	for (int step = 0; step < num_steps; step++) {
-		// collision rectangle
-		SDL2pp::Rect coll_rect = { object.GetRect().x - 1, object.GetRect().y - 1, object.GetRect().w + 2, object.GetRect().h + 2 };
+		SDL2pp::Rect obj_rect = object.GetCollisionRect();
 
-		// side collision GetRect()angles
-		SDL2pp::Rect left_rect = { object.GetRect().x - 1, object.GetRect().y - 1, 1, object.GetRect().h };
-		SDL2pp::Rect right_rect = { object.GetRect().x + object.GetRect().w, object.GetRect().y - 1, 1, object.GetRect().h };
-		SDL2pp::Rect top_rect = { object.GetRect().x - 1, object.GetRect().y - 1, object.GetRect().w, 1 };
-		SDL2pp::Rect bottom_rect = { object.GetRect().x - 1, object.GetRect().y + object.GetRect().h, object.GetRect().w, 1 };
+		// collision rectangle
+		SDL2pp::Rect coll_rect { obj_rect.x - 1, obj_rect.y - 1, obj_rect.w + 2, obj_rect.h + 2 };
+
+		// side collision rectangles
+		SDL2pp::Rect left_rect { obj_rect.x - 1, obj_rect.y, 1, obj_rect.h };
+		SDL2pp::Rect right_rect { obj_rect.x + obj_rect.w, obj_rect.y, 1, obj_rect.h };
+		SDL2pp::Rect top_rect { obj_rect.x, obj_rect.y - 1, obj_rect.w, 1 };
+		SDL2pp::Rect bottom_rect { obj_rect.x, obj_rect.y + obj_rect.h, obj_rect.w, 1 };
 
 		// this + std::max() in the loops below to avoid signed math
 		// problems with negative tile coordinates
