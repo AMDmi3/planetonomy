@@ -124,19 +124,28 @@ void GameScene::RenderGround() {
 
 	for (int y = 0; y < SCREEN_HEIGHT_TILES; y++) {
 		for (int x = 0; x < SCREEN_WIDTH_TILES; x++) {
-			switch (game_map_.GetTile(screen_x * SCREEN_WIDTH_TILES + x, screen_y * SCREEN_HEIGHT_TILES + y).GetType()) {
-			case TileType::EMPTY:
-				break;
-			case TileType::GROUND:
-				painter_.Copy(SpriteData[SPRITE_GROUND], SDL2pp::Point(x * TILE_SIZE, y * TILE_SIZE));
-				break;
-			case TileType::FIXME:
-				painter_.Copy(SpriteData[SPRITE_FIXME], SDL2pp::Point(x * TILE_SIZE, y * TILE_SIZE));
-				break;
-			default:
-				painter_.Copy(SpriteData[SPRITE_FIXME], SDL2pp::Point(x * TILE_SIZE, y * TILE_SIZE));
-				break;
+			TileType tt = game_map_.GetTile(screen_x * SCREEN_WIDTH_TILES + x, screen_y * SCREEN_HEIGHT_TILES + y);
+
+			int flipflag = 0;
+			double angle = 0.0;
+			if (tt.IsDFlipped()) {
+				flipflag = (tt.IsHFlipped() ? 0 : SDL_FLIP_VERTICAL) | (tt.IsVFlipped() ? SDL_FLIP_HORIZONTAL : 0);
+				angle = 90.0;
+			} else {
+				flipflag = (tt.IsHFlipped() ? SDL_FLIP_HORIZONTAL : 0) | (tt.IsVFlipped() ? SDL_FLIP_VERTICAL : 0);
+				angle = 0.0;
 			}
+
+			int sprite_to_render = -1;
+			switch (game_map_.GetTile(screen_x * SCREEN_WIDTH_TILES + x, screen_y * SCREEN_HEIGHT_TILES + y).GetType()) {
+			case TileType::EMPTY:  break;
+			case TileType::GROUND: sprite_to_render = SPRITE_GROUND; break;
+			case TileType::FIXME:  sprite_to_render = SPRITE_FIXME; break;
+			default:               sprite_to_render = SPRITE_FIXME; break;
+			}
+
+			if (sprite_to_render >= 0)
+				painter_.Copy(SpriteData[sprite_to_render], SDL2pp::Point(x * TILE_SIZE, y * TILE_SIZE), angle, SDL2pp::NullOpt, flipflag);
 		}
 	}
 }

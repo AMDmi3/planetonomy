@@ -40,6 +40,7 @@ public:
 
 	void UpdateSize();
 	void Copy(const SDL2pp::Rect& src, const SDL2pp::Point& dst);
+	void Copy(const SDL2pp::Rect& src, const SDL2pp::Point& dst, double angle, const SDL2pp::Optional<SDL2pp::Point>& center = SDL2pp::NullOpt, int flip = 0);
 	void Clear();
 };
 

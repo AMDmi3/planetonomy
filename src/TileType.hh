@@ -28,12 +28,6 @@ public:
 		FIXME = 3,
 	};
 
-	enum FlipFlags {
-		DFLIP = 0x2,
-		VFLIP = 0x4,
-		HFLIP = 0x8,
-	};
-
 private:
 	int data_; // as stored by tiled
 
@@ -60,8 +54,19 @@ public:
 		return static_cast<Type>(data_ & 0xfffffff);
 	}
 
-	int GetFlipFlag() const {
-		return data_ >> 28;
+	bool IsHFlipped() const {
+		// http://doc.mapeditor.org/reference/tmx-map-format/#tile-flipping
+		return data_ & 0x80000000;
+	}
+
+	bool IsVFlipped() const {
+		// http://doc.mapeditor.org/reference/tmx-map-format/#tile-flipping
+		return data_ & 0x40000000;
+	}
+
+	bool IsDFlipped() const {
+		// http://doc.mapeditor.org/reference/tmx-map-format/#tile-flipping
+		return data_ & 0x20000000;
 	}
 };
 
