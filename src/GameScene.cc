@@ -189,14 +189,23 @@ int GameScene::MoveWithCollision(GameScene::DynamicObject& object, float delta_t
 	for (int step = 0; step < num_steps; step++) {
 		result |= CheckCollisionWithStatic(object.GetCollisionRect());
 
+		if (result & (int)CollisionState::LEFT && object.xvel < 0.0f) {
+/*			if (result & (int)CollisionState::BOTTOM && CheckCollisionWithStatic(object.GetCollisionRect() - SDL2pp::Point(0, 4)) == (int)CollisionState::NONE)
+				object.y -= 4;
+			else*/
+				object.xvel = 0.0f;
+		}
+		if (result & (int)CollisionState::RIGHT && object.xvel > 0.0f) {
+/*			if (result & (int)CollisionState::BOTTOM && CheckCollisionWithStatic(object.GetCollisionRect() - SDL2pp::Point(0, 4)) == (int)CollisionState::NONE)
+				object.y -= 4;
+			else*/
+				object.xvel = 0.0f;
+		}
+
 		if (result & (int)CollisionState::TOP && object.yvel < 0.0f)
 			object.yvel = 0.0f;
 		if (result & (int)CollisionState::BOTTOM && object.yvel > 0.0f)
 			object.yvel = 0.0f;
-		if (result & (int)CollisionState::LEFT && object.xvel < 0.0f)
-			object.xvel = 0.0f;
-		if (result & (int)CollisionState::RIGHT && object.xvel > 0.0f)
-			object.xvel = 0.0f;
 
 		object.x += object.xvel * delta_time / num_steps;
 		object.y += object.yvel * delta_time / num_steps;
