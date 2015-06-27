@@ -4,6 +4,16 @@
 
 Old-school platformer/exploration game with CGA graphics
 
+You are a member of space exploration mission to a planetoid with
+unusual properties passing near earth. After successfull touchdown
+your are left in the landing module to control communications and
+look after other systems, while you compares go outside to explore
+the planetoid. After some time, signal from survey team is suddenly
+lost. Now you are alone to save them and uncover the mysteries of
+strange space object.
+
+![Screenshot](docs/screenshot.png)
+
 ## Building
 
 Dependencies:
@@ -11,6 +21,7 @@ Dependencies:
 * cmake
 * SDL2
 * SDL2_image
+* pugixml
 
 The project also uses libSDL2pp, C++11 bindings library for SDL2.
 It's included into git repository as a submodule, so if you've
