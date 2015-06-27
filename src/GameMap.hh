@@ -24,7 +24,7 @@
 #include <vector>
 #include <map>
 
-#include "Constants.hh"
+#include <SDL2pp/Rect.hh>
 
 class GameMap {
 public:

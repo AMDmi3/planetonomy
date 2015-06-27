@@ -17,17 +17,17 @@
  * along with planetonomy.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef CONSTANTS_HH
-#define CONSTANTS_HH
+#ifndef PHYSICS_HH
+#define PHYSICS_HH
 
-static const int kTileSize = 16;
+static const float kGForce = 100.0f;
 
-static const int kScreenWidthPixels = 320;
-static const int kScreenHeightPixels = 200;
+static const float kJumpImpulse = 58.0f;
 
-static const int kAtlasWidthTiles = 16;
+static const float kWalkAccel = 300.0f;
+static const float kWalkDecel = kWalkAccel*2;
+static const float kWalkMaxSpeed = 40.0f;
 
-static const int kScreenWidthTiles = kScreenWidthPixels / kTileSize;
-static const int kScreenHeightTiles = kScreenHeightPixels / kTileSize;
+static const float kAirControlRate = 0.2f;
 
-#endif // CONSTANTS_HH
+#endif // PHYSICS_HH

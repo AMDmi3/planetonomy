@@ -17,17 +17,19 @@
  * along with planetonomy.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef CONSTANTS_HH
-#define CONSTANTS_HH
+#ifndef SPRITES_HH
+#define SPRITES_HH
 
-static const int kTileSize = 16;
+#include <SDL2pp/Rect.hh>
 
-static const int kScreenWidthPixels = 320;
-static const int kScreenHeightPixels = 200;
+enum SpriteNames {
+	SPRITE_PLAYER,
 
-static const int kAtlasWidthTiles = 16;
+	NUM_SPRITES
+};
 
-static const int kScreenWidthTiles = kScreenWidthPixels / kTileSize;
-static const int kScreenHeightTiles = kScreenHeightPixels / kTileSize;
+static const SDL2pp::Rect SpriteData[NUM_SPRITES] = {
+	{ 1, 239, 7, 16 },  // PLAYER
+};
 
-#endif // CONSTANTS_HH
+#endif // SPRITES_HH

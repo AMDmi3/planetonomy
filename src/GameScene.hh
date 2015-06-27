@@ -24,11 +24,9 @@
 
 #include <SDL2pp/Texture.hh>
 
-#include "Scene.hh"
-#include "LowresPainter.hh"
 #include "GameMap.hh"
-
-#include "Constants.hh"
+#include "LowresPainter.hh"
+#include "Scene.hh"
 
 class GameScene : public Scene {
 private:

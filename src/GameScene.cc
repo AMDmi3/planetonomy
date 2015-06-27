@@ -17,20 +17,24 @@
  * along with planetonomy.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "GameScene.hh"
+
 #include <algorithm>
 #include <cmath>
 #include <cassert>
 
-#include "GameScene.hh"
+#include "Constants.hh"
+#include "Physics.hh"
+#include "Sprites.hh"
 
 GameScene::GameScene(Application& app)
 	: Scene(app),
 	  tiles_(GetRenderer(), DATADIR "/images/tiles.png"),
 	  game_map_(DATADIR "/maps/planetonomy.tmx"),
-	  painter_(GetRenderer(), tiles_, SCREEN_WIDTH_PIXELS, SCREEN_HEIGHT_PIXELS),
+	  painter_(GetRenderer(), tiles_, kScreenWidthPixels, kScreenHeightPixels),
 	  prev_frame_time_(SDL_GetTicks()),
-	  player_(SCREEN_WIDTH_PIXELS,
-			  SCREEN_HEIGHT_PIXELS + SCREEN_HEIGHT_PIXELS / 2.0f,
+	  player_(kScreenWidthPixels,
+			  kScreenHeightPixels + kScreenHeightPixels / 2.0f,
 			  SDL2pp::Rect(-SpriteData[SPRITE_PLAYER].w / 2, -SpriteData[SPRITE_PLAYER].h + 1, SpriteData[SPRITE_PLAYER].w, SpriteData[SPRITE_PLAYER].h)
 		  ) {
 	control_flags_ = 0;
@@ -84,29 +88,29 @@ void GameScene::Update() {
 	prev_frame_time_ = frame_time;
 
 	// update player velocity and position
-	player_.yvel += GForce * delta_time;
+	player_.yvel += kGForce * delta_time;
 
 	int moveresult = MoveWithCollision(player_, delta_time);
 
 	// process player controls
 	bool on_ground = (moveresult & (int)CollisionState::BOTTOM) && player_.yvel >= 0.0f;
-	float control_rate = on_ground ? 1.0 : AirControlRate;
+	float control_rate = on_ground ? 1.0 : kAirControlRate;
 
 	// move left/right
-	if (control_flags_ & (int)ControlFlags::LEFT && player_.xvel >= -WalkMaxSpeed) {
-		player_.xvel = std::max(-WalkMaxSpeed, player_.xvel - control_rate * WalkAccel * delta_time);
-	} else if (control_flags_ & (int)ControlFlags::RIGHT && player_.xvel <= WalkMaxSpeed) {
-		player_.xvel = std::min(WalkMaxSpeed, player_.xvel + control_rate * WalkAccel * delta_time);
+	if (control_flags_ & (int)ControlFlags::LEFT && player_.xvel >= -kWalkMaxSpeed) {
+		player_.xvel = std::max(-kWalkMaxSpeed, player_.xvel - control_rate * kWalkAccel * delta_time);
+	} else if (control_flags_ & (int)ControlFlags::RIGHT && player_.xvel <= kWalkMaxSpeed) {
+		player_.xvel = std::min(kWalkMaxSpeed, player_.xvel + control_rate * kWalkAccel * delta_time);
 	} else if (on_ground) { // decelerate when on ground
 		if (player_.xvel > 0)
-			player_.xvel -= std::min(player_.xvel, WalkDecel * delta_time);
+			player_.xvel -= std::min(player_.xvel, kWalkDecel * delta_time);
 		if (player_.xvel < 0)
-			player_.xvel += std::min(-player_.xvel, WalkDecel * delta_time);
+			player_.xvel += std::min(-player_.xvel, kWalkDecel * delta_time);
 	}
 
 	// jump
 	if (on_ground && control_flags_ & (int)ControlFlags::UP)
-		player_.yvel -= JumpImpulse;
+		player_.yvel -= kJumpImpulse;
 
 	// long fall
 	if (moveresult & (int)CollisionState::SCREENBOTTOM)
@@ -126,8 +130,8 @@ void GameScene::Render() {
 	painter_.Clear();
 
 	SDL2pp::Point screen_offset{
-		player_.GetPoint().x / (SCREEN_WIDTH_TILES * TILE_SIZE) * (SCREEN_WIDTH_TILES * TILE_SIZE),
-		player_.GetPoint().y / (SCREEN_HEIGHT_TILES * TILE_SIZE) * (SCREEN_HEIGHT_TILES * TILE_SIZE)
+		player_.GetPoint().x / (kScreenWidthTiles * kTileSize) * (kScreenWidthTiles * kTileSize),
+		player_.GetPoint().y / (kScreenHeightTiles * kTileSize) * (kScreenHeightTiles * kTileSize)
 	};
 
 	RenderGround(screen_offset);
@@ -135,9 +139,9 @@ void GameScene::Render() {
 }
 
 void GameScene::RenderGround(const SDL2pp::Point& offset) {
-	for (int y = 0; y < (SCREEN_HEIGHT_PIXELS + TILE_SIZE - 1) / TILE_SIZE; y++) {
-		for (int x = 0; x < SCREEN_WIDTH_TILES; x++) {
-			GameMap::Tile tt = game_map_.GetTile(offset.x / TILE_SIZE + x, offset.y / TILE_SIZE + y);
+	for (int y = 0; y < (kScreenHeightPixels + kTileSize - 1) / kTileSize; y++) {
+		for (int x = 0; x < kScreenWidthTiles; x++) {
+			GameMap::Tile tt = game_map_.GetTile(offset.x / kTileSize + x, offset.y / kTileSize + y);
 
 			if (tt.GetType() == 0)
 				continue;
@@ -154,12 +158,12 @@ void GameScene::RenderGround(const SDL2pp::Point& offset) {
 			}
 
 			int nsrctile = tt.GetType() - 1;
-			int srcx = nsrctile % ATLAS_WIDTH_TILES * TILE_SIZE;
-			int srcy = nsrctile / ATLAS_WIDTH_TILES * TILE_SIZE;
+			int srcx = nsrctile % kAtlasWidthTiles * kTileSize;
+			int srcy = nsrctile / kAtlasWidthTiles * kTileSize;
 
 			painter_.Copy(
-					SDL2pp::Rect(srcx, srcy, TILE_SIZE, TILE_SIZE),
-					SDL2pp::Point(x * TILE_SIZE, y * TILE_SIZE),
+					SDL2pp::Rect(srcx, srcy, kTileSize, kTileSize),
+					SDL2pp::Point(x * kTileSize, y * kTileSize),
 					angle,
 					SDL2pp::NullOpt,
 					flipflag
@@ -202,10 +206,10 @@ int GameScene::MoveWithCollision(GameScene::DynamicObject& object, float delta_t
 		if (coll_rect.GetY() < 0)
 			result |= (int)CollisionState::TOP;
 
-		for (int y = std::max(coll_rect.y / TILE_SIZE, 0); y <= coll_rect.GetY2() / TILE_SIZE; y++) {
-			for (int x = std::max(coll_rect.x / TILE_SIZE, 0); x <= coll_rect.GetX2() / TILE_SIZE; x++) {
+		for (int y = std::max(coll_rect.y / kTileSize, 0); y <= coll_rect.GetY2() / kTileSize; y++) {
+			for (int x = std::max(coll_rect.x / kTileSize, 0); x <= coll_rect.GetX2() / kTileSize; x++) {
 				for (auto& coll_rect : game_map_.GetTile(x, y).GetCollisionMap()) {
-					SDL2pp::Rect ground_rect = coll_rect + SDL2pp::Point(x * TILE_SIZE, y * TILE_SIZE);
+					SDL2pp::Rect ground_rect = coll_rect + SDL2pp::Point(x * kTileSize, y * kTileSize);
 
 					if (top_rect.Intersects(ground_rect))
 						result |= (int)CollisionState::TOP;

@@ -19,9 +19,9 @@
 
 #include "GameMap.hh"
 
-#include <pugixml.hpp>
-
 #include <cstring>
+
+#include <pugixml.hpp>
 
 GameMap::GameMap(const std::string& tmxpath) {
 	// prase .tmx xml
