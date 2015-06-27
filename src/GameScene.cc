@@ -37,8 +37,6 @@ GameScene::GameScene(Application& app)
 			  kScreenHeightPixels + kScreenHeightPixels / 2.0f,
 			  SDL2pp::Rect(-SpriteData[SPRITE_PLAYER].w / 2, -SpriteData[SPRITE_PLAYER].h + 1, SpriteData[SPRITE_PLAYER].w, SpriteData[SPRITE_PLAYER].h)
 		  ) {
-	control_flags_ = 0;
-
 	player_.collision_rect.y += 1; // XXX: unhardcode
 	player_.collision_rect.h -= 1;
 
@@ -56,9 +54,11 @@ void GameScene::ProcessEvent(const SDL_Event& event) {
 			return;
 		case SDLK_LEFT:
 			control_flags_ |= (int)ControlFlags::LEFT;
+			player_facing_right_ = false;
 			break;
 		case SDLK_RIGHT:
 			control_flags_ |= (int)ControlFlags::RIGHT;
+			player_facing_right_ = true;
 			break;
 		case SDLK_UP:
 			control_flags_ |= (int)ControlFlags::UP;
@@ -174,7 +174,10 @@ void GameScene::RenderPlayer(const SDL2pp::Point& offset) {
 			SDL2pp::Point(
 				(int)player_.GetRect().x - offset.x,
 				(int)player_.GetRect().y - offset.y
-			)
+			),
+			0.0,
+			SDL2pp::NullOpt,
+			player_facing_right_ ? 0 : SDL_FLIP_HORIZONTAL
 		);
 }
 

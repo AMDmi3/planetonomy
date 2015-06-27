@@ -69,6 +69,7 @@ private:
 	unsigned int prev_frame_time_;
 
 	DynamicObject player_;
+	bool player_facing_right_ = true;
 
 	enum class ControlFlags {
 		LEFT = 0x01,
@@ -84,7 +85,7 @@ private:
 		BOTTOM = 0x08,
 	};
 
-	int control_flags_;
+	int control_flags_ = 0;
 
 public:
 	GameScene(Application& app);
