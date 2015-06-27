@@ -30,6 +30,9 @@ void Scene::SetExit(bool exit) {
 Scene::Scene(Application& application) : application_(application) {
 }
 
+Scene::~Scene() {
+}
+
 void Scene::ProcessEvent(const SDL_Event& event) {
 	if (event.type == SDL_QUIT) {
 		SetExit(true);

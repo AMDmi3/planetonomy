@@ -46,6 +46,7 @@ protected:
 
 public:
 	Scene(Application& application);
+	virtual ~Scene();
 
 	virtual void ProcessEvent(const SDL_Event& event);
 	virtual void Update();
