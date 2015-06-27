@@ -82,11 +82,6 @@ private:
 		RIGHT = 0x02,
 		TOP = 0x04,
 		BOTTOM = 0x08,
-
-		SCREENLEFT = 0x10,
-		SCREENRIGHT = 0x20,
-		SCREENTOP = 0x40,
-		SCREENBOTTOM = 0x80,
 	};
 
 	int control_flags_;

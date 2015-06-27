@@ -111,10 +111,6 @@ void GameScene::Update() {
 	// jump
 	if (on_ground && control_flags_ & (int)ControlFlags::UP)
 		player_.yvel -= kJumpImpulse;
-
-	// long fall
-	if (moveresult & (int)CollisionState::SCREENBOTTOM)
-		SetExit(true);
 }
 
 void GameScene::Render() {
