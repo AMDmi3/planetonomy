@@ -27,14 +27,14 @@ enum GameConstants {
 	SCREEN_WIDTH_PIXELS = 320,
 	SCREEN_HEIGHT_PIXELS = 200,
 
+	ATLAS_WIDTH_TILES = 16,
+
 	SCREEN_WIDTH_TILES = SCREEN_WIDTH_PIXELS/TILE_SIZE,
 	SCREEN_HEIGHT_TILES = SCREEN_HEIGHT_PIXELS/TILE_SIZE,
 };
 
 enum SpriteNames {
-	SPRITE_GROUND,
 	SPRITE_PLAYER,
-	SPRITE_FIXME,
 
 	NUM_SPRITES
 };
@@ -50,9 +50,7 @@ static const float WalkMaxSpeed = 40.0f;
 static const float AirControlRate = 0.2f;
 
 static const SDL2pp::Rect SpriteData[NUM_SPRITES] = {
-	{ 19, 1, 16, 16 },  // GROUND
 	{ 1, 237, 8, 18 },  // PLAYER
-	{ 37, 1, 16, 16 },  // FIXME
 };
 
 #endif // CONSTANTS_HH

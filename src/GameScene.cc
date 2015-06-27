@@ -139,6 +139,9 @@ void GameScene::RenderGround(const SDL2pp::Point& offset) {
 		for (int x = 0; x < SCREEN_WIDTH_TILES; x++) {
 			TileType tt = game_map_.GetTile(offset.x / TILE_SIZE + x, offset.y / TILE_SIZE + y);
 
+			if (tt.GetType() == 0)
+				continue;
+
 			// handle tiled's flipping flags
 			int flipflag = 0;
 			double angle = 0.0;
@@ -150,17 +153,17 @@ void GameScene::RenderGround(const SDL2pp::Point& offset) {
 				angle = 0.0;
 			}
 
-			// select tile sprite to render
-			int sprite_to_render = -1;
-			switch (tt.GetType()) {
-			case TileType::EMPTY:  break;
-			case TileType::GROUND: sprite_to_render = SPRITE_GROUND; break;
-			case TileType::FIXME:  sprite_to_render = SPRITE_FIXME; break;
-			default:               sprite_to_render = SPRITE_FIXME; break;
-			}
+			int nsrctile = tt.GetType() - 1;
+			int srcx = nsrctile % ATLAS_WIDTH_TILES * TILE_SIZE;
+			int srcy = nsrctile / ATLAS_WIDTH_TILES * TILE_SIZE;
 
-			if (sprite_to_render >= 0)
-				painter_.Copy(SpriteData[sprite_to_render], SDL2pp::Point(x * TILE_SIZE, y * TILE_SIZE), angle, SDL2pp::NullOpt, flipflag);
+			painter_.Copy(
+					SDL2pp::Rect(srcx, srcy, TILE_SIZE, TILE_SIZE),
+					SDL2pp::Point(x * TILE_SIZE, y * TILE_SIZE),
+					angle,
+					SDL2pp::NullOpt,
+					flipflag
+				);
 		}
 	}
 }
