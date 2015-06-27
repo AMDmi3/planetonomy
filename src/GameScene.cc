@@ -181,46 +181,13 @@ void GameScene::RenderPlayer(const SDL2pp::Point& offset) {
 		);
 }
 
-int GameScene::MoveWithCollision(GameScene::DynamicObject& object, float delta_time) {
+int GameScene::MoveWithCollision(GameScene::DynamicObject& object, float delta_time) const {
 	// move in 1 pixel steps, checking collisions on each step
 	int num_steps = 1 + (int)(std::max(std::abs(object.xvel), std::abs(object.yvel)) * delta_time);
 
 	int result = (int)CollisionState::NONE;
 	for (int step = 0; step < num_steps; step++) {
-		SDL2pp::Rect obj_rect = object.GetCollisionRect();
-
-		// collision rectangle
-		SDL2pp::Rect coll_rect { obj_rect.x - 1, obj_rect.y - 1, obj_rect.w + 2, obj_rect.h + 2 };
-
-		// side collision rectangles
-		SDL2pp::Rect left_rect { obj_rect.x - 1, obj_rect.y, 1, obj_rect.h };
-		SDL2pp::Rect right_rect { obj_rect.x + obj_rect.w, obj_rect.y, 1, obj_rect.h };
-		SDL2pp::Rect top_rect { obj_rect.x, obj_rect.y - 1, obj_rect.w, 1 };
-		SDL2pp::Rect bottom_rect { obj_rect.x, obj_rect.y + obj_rect.h, obj_rect.w, 1 };
-
-		// this + std::max() in the loops below to avoid signed math
-		// problems with negative tile coordinates
-		if (coll_rect.GetX() < 0)
-			result |= (int)CollisionState::LEFT;
-		if (coll_rect.GetY() < 0)
-			result |= (int)CollisionState::TOP;
-
-		for (int y = std::max(coll_rect.y / kTileSize, 0); y <= coll_rect.GetY2() / kTileSize; y++) {
-			for (int x = std::max(coll_rect.x / kTileSize, 0); x <= coll_rect.GetX2() / kTileSize; x++) {
-				for (auto& coll_rect : game_map_.GetTile(x, y).GetCollisionMap()) {
-					SDL2pp::Rect ground_rect = coll_rect + SDL2pp::Point(x * kTileSize, y * kTileSize);
-
-					if (top_rect.Intersects(ground_rect))
-						result |= (int)CollisionState::TOP;
-					if (left_rect.Intersects(ground_rect))
-						result |= (int)CollisionState::LEFT;
-					if (bottom_rect.Intersects(ground_rect))
-						result |= (int)CollisionState::BOTTOM;
-					if (right_rect.Intersects(ground_rect))
-						result |= (int)CollisionState::RIGHT;
-				}
-			}
-		}
+		result |= CheckCollisionWithStatic(object.GetCollisionRect());
 
 		if (result & (int)CollisionState::TOP && object.yvel < 0.0f)
 			object.yvel = 0.0f;
@@ -233,6 +200,45 @@ int GameScene::MoveWithCollision(GameScene::DynamicObject& object, float delta_t
 
 		object.x += object.xvel * delta_time / num_steps;
 		object.y += object.yvel * delta_time / num_steps;
+	}
+
+	return result;
+}
+
+int GameScene::CheckCollisionWithStatic(const SDL2pp::Rect& rect) const {
+	// collision rectangle
+	const SDL2pp::Rect coll_rect { rect.x - 1, rect.y - 1, rect.w + 2, rect.h + 2 };
+
+	// side collision rectangles
+	const SDL2pp::Rect left_rect { rect.x - 1, rect.y, 1, rect.h };
+	const SDL2pp::Rect right_rect { rect.x + rect.w, rect.y, 1, rect.h };
+	const SDL2pp::Rect top_rect { rect.x, rect.y - 1, rect.w, 1 };
+	const SDL2pp::Rect bottom_rect { rect.x, rect.y + rect.h, rect.w, 1 };
+
+	int result = 0;
+
+	// this + std::max() in the loops below to avoid signed math
+	// problems with negative tile coordinates
+	if (coll_rect.GetX() < 0)
+		result |= (int)CollisionState::LEFT;
+	if (coll_rect.GetY() < 0)
+		result |= (int)CollisionState::TOP;
+
+	for (int y = std::max(coll_rect.y / kTileSize, 0); y <= coll_rect.GetY2() / kTileSize; y++) {
+		for (int x = std::max(coll_rect.x / kTileSize, 0); x <= coll_rect.GetX2() / kTileSize; x++) {
+			for (auto& coll_rect : game_map_.GetTile(x, y).GetCollisionMap()) {
+				SDL2pp::Rect ground_rect = coll_rect + SDL2pp::Point(x * kTileSize, y * kTileSize);
+
+				if (top_rect.Intersects(ground_rect))
+					result |= (int)CollisionState::TOP;
+				if (left_rect.Intersects(ground_rect))
+					result |= (int)CollisionState::LEFT;
+				if (bottom_rect.Intersects(ground_rect))
+					result |= (int)CollisionState::BOTTOM;
+				if (right_rect.Intersects(ground_rect))
+					result |= (int)CollisionState::RIGHT;
+			}
+		}
 	}
 
 	return result;

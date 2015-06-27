@@ -97,7 +97,9 @@ public:
 	void RenderGround(const SDL2pp::Point& offset);
 	void RenderPlayer(const SDL2pp::Point& offset);
 
-	int MoveWithCollision(DynamicObject& object, float delta_time);
+	int MoveWithCollision(DynamicObject& object, float delta_time) const;
+
+	int CheckCollisionWithStatic(const SDL2pp::Rect& rect) const;
 };
 
 #endif // GAMESCENE_HH
