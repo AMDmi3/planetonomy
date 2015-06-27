@@ -30,4 +30,6 @@ static const float kWalkMaxSpeed = 40.0f;
 
 static const float kAirControlRate = 0.2f;
 
+static const int kAutoStepAmount = 2;
+
 #endif // PHYSICS_HH

@@ -189,16 +189,31 @@ int GameScene::MoveWithCollision(GameScene::DynamicObject& object, float delta_t
 	for (int step = 0; step < num_steps; step++) {
 		result |= CheckCollisionWithStatic(object.GetCollisionRect());
 
+		// autostep
 		if (result & (int)CollisionState::LEFT && object.xvel < 0.0f) {
-/*			if (result & (int)CollisionState::BOTTOM && CheckCollisionWithStatic(object.GetCollisionRect() - SDL2pp::Point(0, 4)) == (int)CollisionState::NONE)
-				object.y -= 4;
-			else*/
+			int newres;
+			for (int i = 0; i < kAutoStepAmount; i++) {
+				if (result & (int)CollisionState::BOTTOM && (newres = CheckCollisionWithStatic(object.GetCollisionRect() - SDL2pp::Point(0, i))) == (int)CollisionState::NONE) {
+					result = newres;
+					object.y -= i;
+					break;
+				}
+			}
+
+			if (result & (int)CollisionState::LEFT)
 				object.xvel = 0.0f;
 		}
 		if (result & (int)CollisionState::RIGHT && object.xvel > 0.0f) {
-/*			if (result & (int)CollisionState::BOTTOM && CheckCollisionWithStatic(object.GetCollisionRect() - SDL2pp::Point(0, 4)) == (int)CollisionState::NONE)
-				object.y -= 4;
-			else*/
+			int newres;
+			for (int i = 0; i < kAutoStepAmount; i++) {
+				if (result & (int)CollisionState::BOTTOM && (newres = CheckCollisionWithStatic(object.GetCollisionRect() - SDL2pp::Point(0, i))) == (int)CollisionState::NONE) {
+					result = newres;
+					object.y -= i;
+					break;
+				}
+			}
+
+			if (result & (int)CollisionState::RIGHT)
 				object.xvel = 0.0f;
 		}
 
