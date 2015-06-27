@@ -50,7 +50,7 @@ static const float WalkMaxSpeed = 40.0f;
 static const float AirControlRate = 0.2f;
 
 static const SDL2pp::Rect SpriteData[NUM_SPRITES] = {
-	{ 1, 237, 8, 18 },  // PLAYER
+	{ 1, 239, 7, 16 },  // PLAYER
 };
 
 #endif // CONSTANTS_HH
