@@ -35,7 +35,7 @@ GameScene::GameScene(Application& app)
 		  ) {
 	control_flags_ = 0;
 
-	player_.collision_rect.y += 3;
+	player_.collision_rect.y += 3; // XXX: unhardcode
 	player_.collision_rect.h -= 3;
 
 	painter_.UpdateSize();
@@ -137,7 +137,7 @@ void GameScene::Render() {
 void GameScene::RenderGround(const SDL2pp::Point& offset) {
 	for (int y = 0; y < (SCREEN_HEIGHT_PIXELS + TILE_SIZE - 1) / TILE_SIZE; y++) {
 		for (int x = 0; x < SCREEN_WIDTH_TILES; x++) {
-			TileType tt = game_map_.GetTile(offset.x / TILE_SIZE + x, offset.y / TILE_SIZE + y);
+			GameMap::Tile tt = game_map_.GetTile(offset.x / TILE_SIZE + x, offset.y / TILE_SIZE + y);
 
 			if (tt.GetType() == 0)
 				continue;
@@ -204,8 +204,8 @@ int GameScene::MoveWithCollision(GameScene::DynamicObject& object, float delta_t
 
 		for (int y = std::max(coll_rect.y / TILE_SIZE, 0); y <= coll_rect.GetY2() / TILE_SIZE; y++) {
 			for (int x = std::max(coll_rect.x / TILE_SIZE, 0); x <= coll_rect.GetX2() / TILE_SIZE; x++) {
-				if (!game_map_.GetTile(x, y).IsPassable()) {
-					SDL2pp::Rect ground_rect(x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+				for (auto& coll_rect : game_map_.GetTile(x, y).GetCollisionMap()) {
+					SDL2pp::Rect ground_rect = coll_rect + SDL2pp::Point(x * TILE_SIZE, y * TILE_SIZE);
 
 					if (top_rect.Intersects(ground_rect))
 						result |= (int)CollisionState::TOP;

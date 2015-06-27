@@ -22,23 +22,75 @@
 
 #include <string>
 #include <vector>
+#include <map>
 
 #include "Constants.hh"
-#include "TileType.hh"
 
 class GameMap {
+public:
+	typedef std::vector<SDL2pp::Rect> CollisionMap;
+
+	struct TileInfo {
+		CollisionMap collision_map;
+		bool damaging_flag = false;
+
+		TileInfo() {
+		}
+	};
+
+	class Tile {
+	private:
+		unsigned int data_;
+		const TileInfo& info_;
+
+	public:
+		Tile(unsigned int data, const GameMap& map)
+			: data_(data),
+			  info_(map.GetTileInfo(GetType())) {
+		}
+
+		unsigned int GetType() const {
+			return data_ & 0x0fffffff;
+		}
+
+		bool IsHFlipped() const {
+			// http://doc.mapeditor.org/reference/tmx-map-format/#tile-flipping
+			return data_ & 0x80000000;
+		}
+
+		bool IsVFlipped() const {
+			// http://doc.mapeditor.org/reference/tmx-map-format/#tile-flipping
+			return data_ & 0x40000000;
+		}
+
+		bool IsDFlipped() const {
+			// http://doc.mapeditor.org/reference/tmx-map-format/#tile-flipping
+			return data_ & 0x20000000;
+		}
+
+		bool IsDamaging() const {
+			return info_.damaging_flag;
+		}
+
+		const CollisionMap& GetCollisionMap() const {
+			return info_.collision_map;
+		}
+	};
+
 protected:
-	std::vector<TileType> map_data_;
+	std::map<unsigned int, TileInfo> tile_infos_;
+	std::vector<unsigned int> map_data_;
 	unsigned int width_;
 	unsigned int height_;
 
 public:
 	GameMap(const std::string& tmxpath);
 
-	TileType GetTile(int x, int y) const;
-
 	unsigned int GetWidth() const;
 	unsigned int GetHeight() const;
+
+	Tile GetTile(int x, int y) const;
+	const TileInfo& GetTileInfo(unsigned int id) const;
 };
 
 #endif // GAMEMAP_HH
