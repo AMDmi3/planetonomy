@@ -33,6 +33,14 @@ SET(PLANETONOMY_SOURCES
 )
 
 SET(PLANETONOMY_HEADERS
+	src/Application.hh
+	src/Constants.hh
+	src/GameMap.hh
+	src/GameScene.hh
+	src/LowresPainter.hh
+	src/Physics.hh
+	src/Scene.hh
+	src/Sprites.hh
 )
 
 # binary
