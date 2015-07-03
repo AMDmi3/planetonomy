@@ -25,7 +25,7 @@ constexpr float kGForce = 100.0f;
 constexpr float kJumpImpulse = 58.0f;
 
 constexpr float kWalkAccel = 300.0f;
-constexpr float kWalkDecel = kWalkAccel*2;
+constexpr float kWalkDecel = kWalkAccel * 2;
 constexpr float kWalkMaxSpeed = 40.0f;
 
 constexpr float kAirControlRate = 0.2f;
