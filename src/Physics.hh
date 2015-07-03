@@ -20,16 +20,16 @@
 #ifndef PHYSICS_HH
 #define PHYSICS_HH
 
-static const float kGForce = 100.0f;
+constexpr float kGForce = 100.0f;
 
-static const float kJumpImpulse = 58.0f;
+constexpr float kJumpImpulse = 58.0f;
 
-static const float kWalkAccel = 300.0f;
-static const float kWalkDecel = kWalkAccel*2;
-static const float kWalkMaxSpeed = 40.0f;
+constexpr float kWalkAccel = 300.0f;
+constexpr float kWalkDecel = kWalkAccel*2;
+constexpr float kWalkMaxSpeed = 40.0f;
 
-static const float kAirControlRate = 0.2f;
+constexpr float kAirControlRate = 0.2f;
 
-static const int kAutoStepAmount = 2;
+constexpr int kAutoStepAmount = 2;
 
 #endif // PHYSICS_HH

@@ -30,6 +30,7 @@ SET(PLANETONOMY_SOURCES
 	src/LowresPainter.cc
 	src/Main.cc
 	src/Scene.cc
+	src/Sprites.cc
 )
 
 SET(PLANETONOMY_HEADERS

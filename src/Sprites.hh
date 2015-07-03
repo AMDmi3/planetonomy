@@ -28,8 +28,6 @@ enum SpriteNames {
 	NUM_SPRITES
 };
 
-static const SDL2pp::Rect SpriteData[NUM_SPRITES] = {
-	{ 1, 239, 7, 16 },  // PLAYER
-};
+extern const SDL2pp::Rect SpriteData[NUM_SPRITES];
 
 #endif // SPRITES_HH
