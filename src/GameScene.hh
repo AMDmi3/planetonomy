@@ -87,6 +87,9 @@ private:
 
 	int control_flags_ = 0;
 
+	// misc. objects
+	DynamicObject lander_;
+
 public:
 	GameScene(Application& app);
 
@@ -96,6 +99,7 @@ public:
 
 	void RenderGround(const SDL2pp::Point& offset);
 	void RenderPlayer(const SDL2pp::Point& offset);
+	void RenderLander(const SDL2pp::Point& offset);
 
 	int MoveWithCollision(DynamicObject& object, float delta_time) const;
 

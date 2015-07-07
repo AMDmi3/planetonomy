@@ -26,6 +26,7 @@
 
 enum class SpriteNames {
 	PLAYER = 0,
+	LANDER,
 	MOUTH_MONSTER_0,
 	MOUTH_MONSTER_1,
 	MOUTH_MONSTER_2,

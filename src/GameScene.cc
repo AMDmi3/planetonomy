@@ -35,12 +35,16 @@ GameScene::GameScene(Application& app)
 	  prev_frame_time_(SDL_GetTicks()),
 	  player_(0.0f, 0.0f,
 			  SDL2pp::Rect(-SpriteData[(int)SpriteNames::PLAYER].w / 2, -SpriteData[(int)SpriteNames::PLAYER].h + 1, SpriteData[(int)SpriteNames::PLAYER].w, SpriteData[(int)SpriteNames::PLAYER].h)
-		  ) {
+		  ),
+	  lander_(0.0f, 0.0f, SDL2pp::Rect(SpriteData[(int)SpriteNames::LANDER]).SetX(0).SetY(0)) {
 	player_.collision_rect.y += 1; // XXX: unhardcode
 	player_.collision_rect.h -= 1;
 
 	player_.x = game_map_.GetObject(GameMap::PLAYER_START).rect.x + game_map_.GetObject(GameMap::PLAYER_START).rect.w / 2;
 	player_.y = game_map_.GetObject(GameMap::PLAYER_START).rect.GetY2();
+
+	lander_.x = game_map_.GetObject(GameMap::LANDER).rect.x;
+	lander_.y = game_map_.GetObject(GameMap::LANDER).rect.y;
 
 	painter_.UpdateSize();
 }
@@ -133,6 +137,7 @@ void GameScene::Render() {
 	};
 
 	RenderGround(screen_offset);
+	RenderLander(screen_offset);
 	RenderPlayer(screen_offset);
 }
 
@@ -180,6 +185,16 @@ void GameScene::RenderPlayer(const SDL2pp::Point& offset) {
 			0.0,
 			SDL2pp::NullOpt,
 			player_facing_right_ ? 0 : SDL_FLIP_HORIZONTAL
+		);
+}
+
+void GameScene::RenderLander(const SDL2pp::Point& offset) {
+	painter_.Copy(
+			SpriteData[(int)SpriteNames::LANDER],
+			SDL2pp::Point(
+				(int)lander_.GetRect().x - offset.x,
+				(int)lander_.GetRect().y - offset.y
+			)
 		);
 }
 
