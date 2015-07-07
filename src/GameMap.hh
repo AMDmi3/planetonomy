@@ -23,6 +23,7 @@
 #include <string>
 #include <vector>
 #include <map>
+#include <functional>
 
 #include <SDL2pp/Rect.hh>
 
@@ -112,6 +113,10 @@ public:
 
 	Tile GetTile(int x, int y) const;
 	const TileInfo& GetTileInfo(unsigned int id) const;
+
+	const Object& GetObject(ObjectTypes type) const;
+	void ForeachObject(std::function<void(const Object&)> processor) const;
+	void ForeachObject(ObjectTypes type, std::function<void(const Object&)> processor) const;
 };
 
 #endif // GAMEMAP_HH

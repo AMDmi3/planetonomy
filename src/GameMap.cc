@@ -166,3 +166,22 @@ const GameMap::TileInfo& GameMap::GetTileInfo(unsigned int id) const {
 
 	return tileinfo_it->second;
 }
+
+const GameMap::Object& GameMap::GetObject(GameMap::ObjectTypes type) const {
+	for (auto& obj : objects_)
+		if (obj.type == type)
+			return obj;
+
+	throw std::runtime_error("required object not found");
+}
+
+void GameMap::ForeachObject(std::function<void(const GameMap::Object&)> processor) const {
+	for (auto& obj : objects_)
+		processor(obj);
+}
+
+void GameMap::ForeachObject(GameMap::ObjectTypes type, std::function<void(const GameMap::Object&)> processor) const {
+	for (auto& obj : objects_)
+		if (obj.type == type)
+			processor(obj);
+}
