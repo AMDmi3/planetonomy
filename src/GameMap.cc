@@ -20,6 +20,7 @@
 #include "GameMap.hh"
 
 #include <cstring>
+#include <iostream>
 
 #include <pugixml.hpp>
 
@@ -32,68 +33,106 @@ GameMap::GameMap(const std::string& tmxpath) {
 
 	auto map = tmxdoc.child("map");
 
-	// parse tileset
-	{
-		auto tileset = map.child("tileset");
-		int firstgid = tileset.attribute("firstgid").as_int();
+	ParseTileset(map);
+	ParseMap(map);
+	ParseObjects(map);
+}
 
-		for (auto tile = tileset.child("tile"); tile; tile = tile.next_sibling("tile")) {
-			int id = tile.attribute("id").as_int() + firstgid;
-			if (id < 1)
-				throw std::runtime_error("cannot process map file: unexpected tile id");
+void GameMap::ParseTileset(const pugi::xml_node& map) {
+	auto tileset = map.child("tileset");
+	int firstgid = tileset.attribute("firstgid").as_int();
 
-			TileInfo ti;
+	for (auto tile = tileset.child("tile"); tile; tile = tile.next_sibling("tile")) {
+		int id = tile.attribute("id").as_int() + firstgid;
+		if (id < 1)
+			throw std::runtime_error("cannot process map file: unexpected tile id");
 
-			// properties
-			for (auto property = tile.child("properties").child("property"); property; property = property.next_sibling("property")) {
-				if (std::strcmp(property.attribute("name").as_string(), "damaging") == 0)
-					ti.damaging_flag = true;
-			}
+		TileInfo ti;
 
-			// collision
-			for (auto rect = tile.child("objectgroup").child("object"); rect; rect = rect.next_sibling("object")) {
-				ti.collision_map.emplace_back(
-						rect.attribute("x").as_int(),
-						rect.attribute("y").as_int(),
-						rect.attribute("width").as_int(),
-						rect.attribute("height").as_int()
-					);
-			}
-
-			tile_infos_.insert(std::make_pair(id, ti));
+		// properties
+		for (auto property = tile.child("properties").child("property"); property; property = property.next_sibling("property")) {
+			if (std::strcmp(property.attribute("name").as_string(), "damaging") == 0)
+				ti.damaging_flag = true;
 		}
+
+		// collision
+		for (auto rect = tile.child("objectgroup").child("object"); rect; rect = rect.next_sibling("object")) {
+			ti.collision_map.emplace_back(
+					rect.attribute("x").as_int(),
+					rect.attribute("y").as_int(),
+					rect.attribute("width").as_int(),
+					rect.attribute("height").as_int()
+				);
+		}
+
+		tile_infos_.insert(std::make_pair(id, ti));
 	}
 
 	tile_infos_.insert(std::make_pair(0, TileInfo())); // add empty tile
+}
 
-	// parse map
-	{
-		width_ = map.attribute("width").as_int();
-		height_ = map.attribute("height").as_int();
-		std::string map_csv = map.child("layer").child_value("data");
+void GameMap::ParseMap(const pugi::xml_node& map) {
+	width_ = map.attribute("width").as_int();
+	height_ = map.attribute("height").as_int();
+	std::string map_csv = map.child("layer").child_value("data");
 
-		if (width_ == 0 || height_ == 0 || map_csv.empty())
-			throw std::runtime_error("cannot parse map file: cannot get map dimensions or contents");
+	if (width_ == 0 || height_ == 0 || map_csv.empty())
+		throw std::runtime_error("cannot parse map file: cannot get map dimensions or contents");
 
-		map_data_.reserve(width_ * height_);
+	map_data_.reserve(width_ * height_);
 
-		// parse tile array
-		unsigned int curint = 0;
-		unsigned int curlen = 0;
-		for (auto& ch : map_csv) {
-			if (ch >= '0' && ch <= '9') {
-				curint = curint * 10 + ch - '0';
-				curlen++;
-			} else {
-				if (curlen)
-					map_data_.push_back(curint);
-				curint = 0;
-				curlen = 0;
-			}
+	// parse tile array
+	unsigned int curint = 0;
+	unsigned int curlen = 0;
+	for (auto& ch : map_csv) {
+		if (ch >= '0' && ch <= '9') {
+			curint = curint * 10 + ch - '0';
+			curlen++;
+		} else {
+			if (curlen)
+				map_data_.push_back(curint);
+			curint = 0;
+			curlen = 0;
+		}
+	}
+
+	if (map_data_.size() != width_ * height_)
+		throw std::runtime_error("cannot parse map file: unexpected number of tiles in the map");
+}
+
+void GameMap::ParseObjects(const pugi::xml_node& map) {
+	pugi::xml_node objects_group;
+	for (auto objectgroup = map.child("objectgroup"); objectgroup; objectgroup = objectgroup.next_sibling("objectgroup"))
+		if (std::strcmp(objectgroup.attribute("name").as_string(), "Objects") == 0)
+			objects_group = objectgroup;
+
+	if (!objects_group)
+		throw std::runtime_error("cannot parse map file: objects layer not found");
+
+	for (auto object = objects_group.child("object"); object; object = object.next_sibling("object")) {
+		ObjectTypes type;
+
+		const auto objtypename = object.attribute("type").as_string();
+		if (std::strcmp(objtypename, "lander") == 0) {
+			type = LANDER;
+		} else if (std::strcmp(objtypename, "player_start") == 0) {
+			type = PLAYER_START;
+		} else if (std::strcmp(objtypename, "mouth_monster") == 0) {
+			type = MOUTH_MONSTER;
+		} else {
+			std::cerr << "WARNING: Unknown object type: " << objtypename << std::endl;
+			continue;
 		}
 
-		if (map_data_.size() != width_ * height_)
-			throw std::runtime_error("cannot parse map file: unexpected number of tiles in the map");
+		objects_.emplace_back(Object{
+				type,
+				{
+					object.attribute("x").as_int(),
+					object.attribute("y").as_int(),
+					object.attribute("width").as_int(),
+					object.attribute("height").as_int()
+				}
+			});
 	}
 }
 

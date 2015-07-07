@@ -26,6 +26,10 @@
 
 #include <SDL2pp/Rect.hh>
 
+namespace pugi {
+	class xml_node;
+};
+
 class GameMap {
 public:
 	typedef std::vector<SDL2pp::Rect> CollisionMap;
@@ -77,14 +81,31 @@ public:
 		}
 	};
 
+	enum ObjectTypes {
+		LANDER,
+		PLAYER_START,
+		MOUTH_MONSTER,
+	};
+
+	struct Object {
+		ObjectTypes type;
+		SDL2pp::Rect rect;
+	};
+
 protected:
 	std::map<unsigned int, TileInfo> tile_infos_;
 	std::vector<unsigned int> map_data_;
 	unsigned int width_;
 	unsigned int height_;
 
+	std::vector<Object> objects_;
+
 public:
 	GameMap(const std::string& tmxpath);
+
+	void ParseTileset(const pugi::xml_node& map);
+	void ParseMap(const pugi::xml_node& map);
+	void ParseObjects(const pugi::xml_node& map);
 
 	unsigned int GetWidth() const;
 	unsigned int GetHeight() const;
