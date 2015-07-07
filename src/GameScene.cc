@@ -33,12 +33,14 @@ GameScene::GameScene(Application& app)
 	  game_map_(DATADIR "/maps/planetonomy.tmx"),
 	  painter_(GetRenderer(), tiles_, kScreenWidthPixels, kScreenHeightPixels),
 	  prev_frame_time_(SDL_GetTicks()),
-	  player_(kScreenWidthPixels,
-			  kScreenHeightPixels + kScreenHeightPixels / 2.0f,
+	  player_(0.0f, 0.0f,
 			  SDL2pp::Rect(-SpriteData[(int)SpriteNames::PLAYER].w / 2, -SpriteData[(int)SpriteNames::PLAYER].h + 1, SpriteData[(int)SpriteNames::PLAYER].w, SpriteData[(int)SpriteNames::PLAYER].h)
 		  ) {
 	player_.collision_rect.y += 1; // XXX: unhardcode
 	player_.collision_rect.h -= 1;
+
+	player_.x = game_map_.GetObject(GameMap::PLAYER_START).rect.x + game_map_.GetObject(GameMap::PLAYER_START).rect.w / 2;
+	player_.y = game_map_.GetObject(GameMap::PLAYER_START).rect.GetY2();
 
 	painter_.UpdateSize();
 }
