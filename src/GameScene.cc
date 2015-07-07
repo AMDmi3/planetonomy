@@ -35,7 +35,7 @@ GameScene::GameScene(Application& app)
 	  prev_frame_time_(SDL_GetTicks()),
 	  player_(kScreenWidthPixels,
 			  kScreenHeightPixels + kScreenHeightPixels / 2.0f,
-			  SDL2pp::Rect(-SpriteData[SPRITE_PLAYER].w / 2, -SpriteData[SPRITE_PLAYER].h + 1, SpriteData[SPRITE_PLAYER].w, SpriteData[SPRITE_PLAYER].h)
+			  SDL2pp::Rect(-SpriteData[(int)SpriteNames::PLAYER].w / 2, -SpriteData[(int)SpriteNames::PLAYER].h + 1, SpriteData[(int)SpriteNames::PLAYER].w, SpriteData[(int)SpriteNames::PLAYER].h)
 		  ) {
 	player_.collision_rect.y += 1; // XXX: unhardcode
 	player_.collision_rect.h -= 1;
@@ -170,7 +170,7 @@ void GameScene::RenderGround(const SDL2pp::Point& offset) {
 
 void GameScene::RenderPlayer(const SDL2pp::Point& offset) {
 	painter_.Copy(
-			SpriteData[SPRITE_PLAYER],
+			SpriteData[(int)SpriteNames::PLAYER],
 			SDL2pp::Point(
 				(int)player_.GetRect().x - offset.x,
 				(int)player_.GetRect().y - offset.y

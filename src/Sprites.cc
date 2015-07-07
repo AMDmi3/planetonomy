@@ -19,6 +19,9 @@
 
 #include "Sprites.hh"
 
-const SDL2pp::Rect SpriteData[NUM_SPRITES] = {
+const SDL2pp::Rect SpriteData[(int)SpriteNames::NUM_SPRITES] = {
 	{ 1, 239, 7, 16 },  // PLAYER
+	{ 1, 209, 32, 5 },  // MOUTH_MONSTER_0
+	{ 1, 215, 32, 9 },  // MOUTH_MONSTER_1
+	{ 1, 225, 32, 13 },  // MOUTH_MONSTER_2
 };

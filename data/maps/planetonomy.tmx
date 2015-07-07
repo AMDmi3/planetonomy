@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" orientation="orthogonal" renderorder="right-down" width="120" height="84" tilewidth="16" tileheight="16" backgroundcolor="#7f7f7f" nextobjectid="53">
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="120" height="84" tilewidth="16" tileheight="16" backgroundcolor="#7f7f7f" nextobjectid="54">
  <tileset firstgid="1" name="Tiles" tilewidth="16" tileheight="16">
   <image source="../images/tiles.png" width="256" height="256"/>
   <tile id="1">
@@ -310,5 +310,6 @@
   <object id="47" type="lander" x="64" y="320" width="32" height="32"/>
   <object id="48" type="player_start" x="96" y="320" width="16" height="16"/>
   <object id="50" type="airflow" x="448" y="288" width="64" height="176"/>
+  <object id="53" type="mouth_monster" x="1360" y="240" width="32" height="16"/>
  </objectgroup>
 </map>

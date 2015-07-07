@@ -20,14 +20,19 @@
 #ifndef SPRITES_HH
 #define SPRITES_HH
 
+#include <vector>
+
 #include <SDL2pp/Rect.hh>
 
-enum SpriteNames {
-	SPRITE_PLAYER,
+enum class SpriteNames {
+	PLAYER = 0,
+	MOUTH_MONSTER_0,
+	MOUTH_MONSTER_1,
+	MOUTH_MONSTER_2,
 
 	NUM_SPRITES
 };
 
-extern const SDL2pp::Rect SpriteData[NUM_SPRITES];
+extern const SDL2pp::Rect SpriteData[(int)SpriteNames::NUM_SPRITES];
 
 #endif // SPRITES_HH
