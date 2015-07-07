@@ -17,17 +17,8 @@
  * along with planetonomy.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef CONSTANTS_HH
-#define CONSTANTS_HH
+#include "Sprites.hh"
 
-constexpr int kTileSize = 16;
-
-constexpr int kScreenWidthPixels = 320;
-constexpr int kScreenHeightPixels = 200;
-
-constexpr int kAtlasWidthTiles = 16;
-
-constexpr int kScreenWidthTiles = kScreenWidthPixels / kTileSize;
-constexpr int kScreenHeightTiles = kScreenHeightPixels / kTileSize;
-
-#endif // CONSTANTS_HH
+const SDL2pp::Rect SpriteData[NUM_SPRITES] = {
+	{ 1, 239, 7, 16 },  // PLAYER
+};
