@@ -98,6 +98,11 @@ void GameScene::Update() {
 
 	int moveresult = MoveWithCollision(player_, delta_time);
 
+	if (moveresult & (int)CollisionState::DAMAGING) {
+		Death("touched something deadly");
+		return;
+	}
+
 	// process player controls
 	bool on_ground = (moveresult & (int)CollisionState::BOTTOM) && player_.yvel >= 0.0f;
 	float control_rate = on_ground ? 1.0 : kAirControlRate;
@@ -267,17 +272,24 @@ int GameScene::CheckCollisionWithStatic(const SDL2pp::Rect& rect) const {
 
 	for (int y = std::max(coll_rect.y / kTileSize, 0); y <= coll_rect.GetY2() / kTileSize; y++) {
 		for (int x = std::max(coll_rect.x / kTileSize, 0); x <= coll_rect.GetX2() / kTileSize; x++) {
-			for (auto& coll_rect : game_map_.GetTile(x, y).GetCollisionMap()) {
+			const auto& tile = game_map_.GetTile(x, y);
+			for (auto& coll_rect : tile.GetCollisionMap()) {
 				SDL2pp::Rect ground_rect = coll_rect + SDL2pp::Point(x * kTileSize, y * kTileSize);
 
+				int tile_result = 0;
 				if (top_rect.Intersects(ground_rect))
-					result |= (int)CollisionState::TOP;
+					tile_result |= (int)CollisionState::TOP;
 				if (left_rect.Intersects(ground_rect))
-					result |= (int)CollisionState::LEFT;
+					tile_result |= (int)CollisionState::LEFT;
 				if (bottom_rect.Intersects(ground_rect))
-					result |= (int)CollisionState::BOTTOM;
+					tile_result |= (int)CollisionState::BOTTOM;
 				if (right_rect.Intersects(ground_rect))
-					result |= (int)CollisionState::RIGHT;
+					tile_result |= (int)CollisionState::RIGHT;
+
+				if (tile_result && tile.IsDamaging())
+					tile_result |= (int)CollisionState::DAMAGING;
+
+				result |= tile_result;
 			}
 		}
 	}

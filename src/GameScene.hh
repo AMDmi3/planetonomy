@@ -83,6 +83,8 @@ private:
 		RIGHT = 0x02,
 		TOP = 0x04,
 		BOTTOM = 0x08,
+
+		DAMAGING = 0x100,
 	};
 
 	int control_flags_ = 0;
