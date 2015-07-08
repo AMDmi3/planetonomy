@@ -96,10 +96,16 @@ void GameScene::Update() {
 	// update player velocity and position
 	player_.yvel += kGForce * delta_time;
 
+	float original_yvel = player_.yvel;
+
 	int moveresult = MoveWithCollision(player_, delta_time);
 
 	if (moveresult & (int)CollisionState::DEADLY) {
-		Death("touched something deadly");
+		Death("you've touched something deadly");
+		return;
+	}
+	if (moveresult & (int)CollisionState::BOTTOM && original_yvel >= kFatalSpeed) {
+		Death("you fell to your death");
 		return;
 	}
 
@@ -298,6 +304,6 @@ int GameScene::CheckCollisionWithStatic(const SDL2pp::Rect& rect) const {
 }
 
 void GameScene::Death(const std::string& message) {
-	std::cerr << "You have died (" << message << ")" << std::endl;
+	std::cerr << "Game over (" << message << ")" << std::endl;
 	SetExit(true);
 }

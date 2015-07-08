@@ -30,6 +30,16 @@ constexpr float kWalkMaxSpeed = 40.0f;
 
 constexpr float kAirControlRate = 0.2f;
 
+// This is set based on the following idea:
+// Falling down one screen should be OK (by map design, it'll be common
+// along the game). Top speed for falling one screen down after jumping
+// is 204.3.
+// Longer falls (such as into the `nose') should be fatal. Top speed for
+// shortest possible fall into the nose is 226.2
+// Fatal set should be in-between. Maybe reconsidered later for bowel
+// and lungs.
+constexpr float kFatalSpeed = 210.0f;
+
 constexpr int kAutoStepAmount = 2;
 
 #endif // PHYSICS_HH
