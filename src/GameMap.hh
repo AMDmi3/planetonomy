@@ -22,7 +22,7 @@
 
 #include <string>
 #include <vector>
-#include <map>
+#include <unordered_map>
 #include <functional>
 #include <algorithm>
 
@@ -118,7 +118,7 @@ public:
 	};
 
 protected:
-	std::map<unsigned int, TileInfo> tile_infos_;
+	std::unordered_map<unsigned int, TileInfo> tile_infos_;
 	std::vector<unsigned int> map_data_;
 	unsigned int width_;
 	unsigned int height_;
