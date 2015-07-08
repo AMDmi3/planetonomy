@@ -93,13 +93,19 @@ void GameScene::Update() {
 	float delta_time = (frame_time - prev_frame_time_) / 1000.0f; // seconds
 	prev_frame_time_ = frame_time;
 
-	// update player velocity and position
+	UpdatePlayer(delta_time);
+}
+
+void GameScene::UpdatePlayer(float delta_time) {
+	// Make gravity work
 	player_.yvel += kGForce * delta_time;
 
 	float original_yvel = player_.yvel;
 
+	// Update player position
 	int moveresult = MoveWithCollision(player_, delta_time);
 
+	// Handle some death conditions
 	if (moveresult & (int)CollisionState::DEADLY) {
 		Death("you've touched something deadly");
 		return;
@@ -109,11 +115,11 @@ void GameScene::Update() {
 		return;
 	}
 
-	// process player controls
+	// Process player controls
 	bool on_ground = (moveresult & (int)CollisionState::BOTTOM) && player_.yvel >= 0.0f;
 	float control_rate = on_ground ? 1.0 : kAirControlRate;
 
-	// move left/right
+	// Move left/right
 	if (control_flags_ & (int)ControlFlags::LEFT && player_.xvel >= -kWalkMaxSpeed) {
 		player_.xvel = std::max(-kWalkMaxSpeed, player_.xvel - control_rate * kWalkAccel * delta_time);
 	} else if (control_flags_ & (int)ControlFlags::RIGHT && player_.xvel <= kWalkMaxSpeed) {
@@ -125,7 +131,7 @@ void GameScene::Update() {
 			player_.xvel += std::min(-player_.xvel, kWalkDecel * delta_time);
 	}
 
-	// jump
+	// Jump
 	if (on_ground && control_flags_ & (int)ControlFlags::UP)
 		player_.yvel -= kJumpImpulse;
 }

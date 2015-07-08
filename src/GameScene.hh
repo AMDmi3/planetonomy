@@ -99,6 +99,8 @@ public:
 	virtual void Update() override;
 	virtual void Render() override;
 
+	void UpdatePlayer(float delta_time);
+
 	void RenderGround(const SDL2pp::Point& offset);
 	void RenderPlayer(const SDL2pp::Point& offset);
 	void RenderLander(const SDL2pp::Point& offset);
