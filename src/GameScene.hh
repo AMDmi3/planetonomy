@@ -104,6 +104,8 @@ public:
 	int MoveWithCollision(DynamicObject& object, float delta_time) const;
 
 	int CheckCollisionWithStatic(const SDL2pp::Rect& rect) const;
+
+	void Death(const std::string& message);
 };
 
 #endif // GAMESCENE_HH

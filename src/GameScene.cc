@@ -284,3 +284,8 @@ int GameScene::CheckCollisionWithStatic(const SDL2pp::Rect& rect) const {
 
 	return result;
 }
+
+void GameScene::Death(const std::string& message) {
+	std::cerr << "You have died (" << message << ")" << std::endl;
+	SetExit(true);
+}
