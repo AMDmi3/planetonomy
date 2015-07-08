@@ -20,8 +20,10 @@
 #ifndef PHYSICS_HH
 #define PHYSICS_HH
 
+// Gravity
 constexpr float kGForce = 100.0f;
 
+// Amount of velocity to add on jumping
 constexpr float kJumpImpulse = 58.0f;
 
 constexpr float kWalkAccel = 300.0f;
@@ -40,6 +42,10 @@ constexpr float kAirControlRate = 0.2f;
 // and lungs.
 constexpr float kFatalSpeed = 210.0f;
 
+// If player moves on the ground and encounters a step of this
+// pixels high, he is automatically moved up this step. This
+// makes it possible to travel up gentle slopes without need to
+// jump; too high amount hehaves ugly though
 constexpr int kAutoStepAmount = 2;
 
 #endif // PHYSICS_HH
