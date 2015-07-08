@@ -350,7 +350,7 @@
  </objectgroup>
  <objectgroup name="Objects">
   <object id="47" type="lander" x="64" y="320" width="32" height="32"/>
-  <object id="48" type="player_start" x="96" y="320" width="16" height="16"/>
+  <object id="48" type="player_start" x="80" y="336" width="16" height="16"/>
   <object id="50" type="airflow" x="448" y="288" width="64" height="176"/>
   <object id="53" type="mouth_monster" x="1360" y="240" width="32" height="16"/>
   <object id="55" type="comrade" x="832" y="832" width="16" height="16"/>
