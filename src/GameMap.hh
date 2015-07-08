@@ -24,8 +24,11 @@
 #include <vector>
 #include <map>
 #include <functional>
+#include <algorithm>
 
 #include <SDL2pp/Rect.hh>
+
+#include "Constants.hh"
 
 namespace pugi {
 	class xml_node;
@@ -73,12 +76,33 @@ public:
 			return data_ & 0x20000000;
 		}
 
+		bool IsFlipped() const {
+			return IsDFlipped() || IsHFlipped() || IsVFlipped();
+		}
+
 		bool IsDeadly() const {
 			return info_.deadly_flag;
 		}
 
-		const CollisionMap& GetCollisionMap() const {
-			return info_.collision_map;
+		CollisionMap GetCollisionMap() const {
+			if (!IsFlipped())
+				return info_.collision_map;
+
+			// Transform collision map based on tile flips
+			CollisionMap transformed_map;
+			for (auto rect : info_.collision_map) {
+				if (IsDFlipped()) {
+					std::swap(rect.x, rect.y);
+					std::swap(rect.w, rect.h);
+				}
+				if (IsHFlipped())
+					rect.x = kTileSize - rect.x - rect.w;
+				if (IsVFlipped())
+					rect.y = kTileSize - rect.y - rect.h;
+
+				transformed_map.emplace_back(rect);
+			}
+			return transformed_map;
 		}
 	};
 
