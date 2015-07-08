@@ -166,28 +166,35 @@ void GameScene::RenderGround(const SDL2pp::Point& offset) {
 			if (tt.GetType() == 0)
 				continue;
 
-			// handle tiled's flipping flags
-			int flipflag = 0;
-			double angle = 0.0;
-			if (tt.IsDFlipped()) {
-				flipflag = (tt.IsHFlipped() ? 0 : SDL_FLIP_VERTICAL) | (tt.IsVFlipped() ? SDL_FLIP_HORIZONTAL : 0);
-				angle = 90.0;
-			} else {
-				flipflag = (tt.IsHFlipped() ? SDL_FLIP_HORIZONTAL : 0) | (tt.IsVFlipped() ? SDL_FLIP_VERTICAL : 0);
-				angle = 0.0;
-			}
-
 			int nsrctile = tt.GetType() - 1;
 			int srcx = nsrctile % kAtlasWidthTiles * kTileSize;
 			int srcy = nsrctile / kAtlasWidthTiles * kTileSize;
 
-			painter_.Copy(
-					SDL2pp::Rect(srcx, srcy, kTileSize, kTileSize),
-					SDL2pp::Point(x * kTileSize, y * kTileSize),
-					angle,
-					SDL2pp::NullOpt,
-					flipflag
-				);
+			if (tt.IsFlipped()) {
+				// handle tiled's flipping flags
+				int flipflag = 0;
+				double angle = 0.0;
+				if (tt.IsDFlipped()) {
+					flipflag = (tt.IsHFlipped() ? 0 : SDL_FLIP_VERTICAL) | (tt.IsVFlipped() ? SDL_FLIP_HORIZONTAL : 0);
+					angle = 90.0;
+				} else {
+					flipflag = (tt.IsHFlipped() ? SDL_FLIP_HORIZONTAL : 0) | (tt.IsVFlipped() ? SDL_FLIP_VERTICAL : 0);
+					angle = 0.0;
+				}
+
+				painter_.Copy(
+						SDL2pp::Rect(srcx, srcy, kTileSize, kTileSize),
+						SDL2pp::Point(x * kTileSize, y * kTileSize),
+						angle,
+						SDL2pp::NullOpt,
+						flipflag
+					);
+			} else {
+				painter_.Copy(
+						SDL2pp::Rect(srcx, srcy, kTileSize, kTileSize),
+						SDL2pp::Point(x * kTileSize, y * kTileSize)
+					);
+			}
 		}
 	}
 }
