@@ -37,7 +37,7 @@ public:
 
 	struct TileInfo {
 		CollisionMap collision_map;
-		bool damaging_flag = false;
+		bool deadly_flag = false;
 
 		TileInfo() {
 		}
@@ -73,8 +73,8 @@ public:
 			return data_ & 0x20000000;
 		}
 
-		bool IsDamaging() const {
-			return info_.damaging_flag;
+		bool IsDeadly() const {
+			return info_.deadly_flag;
 		}
 
 		const CollisionMap& GetCollisionMap() const {

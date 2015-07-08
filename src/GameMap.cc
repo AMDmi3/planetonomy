@@ -51,8 +51,8 @@ void GameMap::ParseTileset(const pugi::xml_node& map) {
 
 		// properties
 		for (auto property = tile.child("properties").child("property"); property; property = property.next_sibling("property")) {
-			if (std::strcmp(property.attribute("name").as_string(), "damaging") == 0)
-				ti.damaging_flag = true;
+			if (std::strcmp(property.attribute("name").as_string(), "deadly") == 0)
+				ti.deadly_flag = true;
 		}
 
 		// collision

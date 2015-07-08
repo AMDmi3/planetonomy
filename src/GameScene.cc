@@ -98,7 +98,7 @@ void GameScene::Update() {
 
 	int moveresult = MoveWithCollision(player_, delta_time);
 
-	if (moveresult & (int)CollisionState::DAMAGING) {
+	if (moveresult & (int)CollisionState::DEADLY) {
 		Death("touched something deadly");
 		return;
 	}
@@ -286,8 +286,8 @@ int GameScene::CheckCollisionWithStatic(const SDL2pp::Rect& rect) const {
 				if (right_rect.Intersects(ground_rect))
 					tile_result |= (int)CollisionState::RIGHT;
 
-				if (tile_result && tile.IsDamaging())
-					tile_result |= (int)CollisionState::DAMAGING;
+				if (tile_result && tile.IsDeadly())
+					tile_result |= (int)CollisionState::DEADLY;
 
 				result |= tile_result;
 			}
