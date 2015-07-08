@@ -18,10 +18,10 @@ strange space object.
 
 Dependencies:
 
-* cmake
-* SDL2
-* SDL2_image
-* pugixml
+* [CMake](http://www.cmake.org/)
+* [SDL2](http://libsdl.org/)
+* [SDL2_image](https://www.libsdl.org/projects/SDL_image/)
+* [pugixml](http://pugixml.org/)
 
 The project also uses libSDL2pp, C++11 bindings library for SDL2.
 It's included into git repository as a submodule, so if you've
