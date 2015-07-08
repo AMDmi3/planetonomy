@@ -32,7 +32,7 @@
 
 namespace pugi {
 	class xml_node;
-};
+}
 
 class GameMap {
 public:
