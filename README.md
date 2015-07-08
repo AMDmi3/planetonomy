@@ -40,7 +40,8 @@ cmake . && make
 
 ## License
 
-GPLv3 or later, see COPYING
+* Code: GPLv3 or later, see COPYING
+* Assets: [Creative Commons Attribution-ShareAlike 4.0 International License](http://creativecommons.org/licenses/by-sa/4.0/)
 
 The project also bundles third party software under its own licenses:
 
