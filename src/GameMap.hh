@@ -23,6 +23,7 @@
 #include <string>
 #include <vector>
 #include <unordered_map>
+#include <map>
 #include <functional>
 #include <algorithm>
 
@@ -45,6 +46,11 @@ public:
 
 		TileInfo() {
 		}
+	};
+
+	struct MetaTileInfo {
+		SDL2pp::Rect source_rect;
+		CollisionMap collision_map;
 	};
 
 	class Tile {
@@ -111,9 +117,6 @@ public:
 		}
 	};
 
-	class MetaTile {
-	};
-
 	enum ObjectTypes {
 		LANDER,
 		PLAYER_START,
@@ -133,6 +136,8 @@ protected:
 
 	std::vector<Object> objects_;
 
+	std::map<std::string, MetaTileInfo> metatile_infos_;
+
 public:
 	GameMap(const std::string& tmxpath);
 
@@ -145,6 +150,7 @@ public:
 
 	Tile GetTile(int x, int y) const;
 	const TileInfo& GetTileInfo(unsigned int id) const;
+	const MetaTileInfo& GetMetaTileInfo(const std::string& name) const;
 
 	const Object& GetObject(ObjectTypes type) const;
 	void ForeachObject(std::function<void(const Object&)> processor) const;

@@ -22,6 +22,8 @@
 #include <cstring>
 #include <iostream>
 
+#include <SDL2pp/Point.hh>
+
 #include <pugixml.hpp>
 
 GameMap::GameMap(const std::string& tmxpath) {
@@ -54,6 +56,7 @@ void GameMap::ParseTileset(const pugi::xml_node& map) {
 	if (tilewidth <= 0 || tileheight <= 0 || imagewidth <= 0 || imageheight <= 0)
 			throw std::runtime_error("cannot process map file: unexpected tileset dimensions");
 
+	// parse plain tiles
 	for (auto tile = tileset.child("tile"); tile; tile = tile.next_sibling("tile")) {
 		int global_id = tile.attribute("id").as_int() + firstgid;
 		if (global_id < 1)
@@ -89,6 +92,45 @@ void GameMap::ParseTileset(const pugi::xml_node& map) {
 				tilewidth,
 				tileheight
 			);
+	}
+
+	// parse metatiles tiles
+	for (auto tile = tileset.child("tile"); tile; tile = tile.next_sibling("tile")) {
+		int global_id = tile.attribute("id").as_int() + firstgid;
+		if (global_id < 1)
+			throw std::runtime_error("cannot process map file: unexpected tile id");
+
+		int width = 1;
+		int height = 1;
+		std::string name;
+
+		for (auto property = tile.child("properties").child("property"); property; property = property.next_sibling("property")) {
+			if (std::strcmp(property.attribute("name").as_string(), "width") == 0)
+				width = property.attribute("value").as_int();
+			else if (std::strcmp(property.attribute("name").as_string(), "height") == 0)
+				height = property.attribute("value").as_int();
+			else if (std::strcmp(property.attribute("name").as_string(), "name") == 0)
+				name = property.attribute("value").as_string();
+		}
+
+		if (name == "") // not a metatile
+			continue;
+
+		if (width < 1 || height < 1)
+			throw std::runtime_error("cannot process map file: invalid metatile size");
+
+		MetaTileInfo mti;
+
+		mti.source_rect = tile_infos_[global_id].source_rect;
+		mti.source_rect.w = width * tilewidth;
+		mti.source_rect.h = height * tileheight;
+
+		for (int y = 0; y < height; y++)
+			for (int x = 0; x < height; x++)
+				for (const auto& rect : tile_infos_[global_id].collision_map)
+					mti.collision_map.push_back(rect + SDL2pp::Point(x * tilewidth, y * tileheight));
+
+		metatile_infos_.insert(std::make_pair(name, mti));
 	}
 
 	tile_infos_.insert(std::make_pair(0, TileInfo())); // add empty tile
@@ -188,6 +230,14 @@ const GameMap::TileInfo& GameMap::GetTileInfo(unsigned int id) const {
 		tileinfo_it = tile_infos_.find(0);
 
 	return tileinfo_it->second;
+}
+
+const GameMap::MetaTileInfo& GameMap::GetMetaTileInfo(const std::string& name) const {
+	auto metatileinfo_it = metatile_infos_.find(name);
+	if (metatileinfo_it == metatile_infos_.cend())
+		throw std::runtime_error("unknown metatile name");
+
+	return metatileinfo_it->second;
 }
 
 const GameMap::Object& GameMap::GetObject(GameMap::ObjectTypes type) const {
