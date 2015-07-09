@@ -60,8 +60,9 @@ private:
 			return rect + GetPoint();
 		}
 
-		SDL2pp::Rect GetCollisionRect() const {
-			return collision_rect + GetPoint();
+		template <class Processor>
+		void ForeachCollisionRect(Processor processor) const {
+			processor(collision_rect + GetPoint());
 		}
 	};
 

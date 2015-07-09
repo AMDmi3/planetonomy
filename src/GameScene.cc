@@ -223,37 +223,37 @@ int GameScene::MoveWithCollision(GameScene::DynamicObject& object, float delta_t
 	int num_steps = 1 + (int)(std::max(std::abs(object.xvel), std::abs(object.yvel)) * delta_time);
 
 	int result = (int)CollisionState::NONE;
-	for (int step = 0; step < num_steps; step++) {
-		result |= CheckCollisionWithStatic(object.GetCollisionRect());
+	for (int step = 0; step < num_steps && (object.xvel != 0.0f || object.yvel != 0.0f); step++) {
+		result = (int)CollisionState::NONE;
 
-		// autostep
-		if (result & (int)CollisionState::LEFT && object.xvel < 0.0f) {
-			int newres;
-			for (int i = 0; i < kAutoStepAmount; i++) {
-				if (result & (int)CollisionState::BOTTOM && (newres = CheckCollisionWithStatic(object.GetCollisionRect() - SDL2pp::Point(0, i))) == (int)CollisionState::NONE) {
-					result = newres;
-					object.y -= i;
+		// try normal collision
+		object.ForeachCollisionRect([&result, this](const SDL2pp::Rect& rect){
+				result |= CheckCollisionWithStatic(rect);
+			});
+
+		// if applicable, try autostep
+		if (result & (int)CollisionState::BOTTOM &&
+				((result & (int)CollisionState::LEFT && object.xvel < 0.0f) ||
+				(result & (int)CollisionState::RIGHT && object.xvel > 0.0f))) {
+			for (int autostep = 1; autostep <= kAutoStepAmount; autostep++) {
+				int tryresult = (int)CollisionState::NONE;
+
+				object.ForeachCollisionRect([&tryresult, autostep, this](const SDL2pp::Rect& rect){
+						tryresult |= CheckCollisionWithStatic(rect - SDL2pp::Point(0, autostep));
+					});
+
+				if (tryresult == (int)CollisionState::NONE) {
+					result = tryresult;
+					object.y -= autostep;
 					break;
 				}
 			}
-
-			if (result & (int)CollisionState::LEFT)
-				object.xvel = 0.0f;
-		}
-		if (result & (int)CollisionState::RIGHT && object.xvel > 0.0f) {
-			int newres;
-			for (int i = 0; i < kAutoStepAmount; i++) {
-				if (result & (int)CollisionState::BOTTOM && (newres = CheckCollisionWithStatic(object.GetCollisionRect() - SDL2pp::Point(0, i))) == (int)CollisionState::NONE) {
-					result = newres;
-					object.y -= i;
-					break;
-				}
-			}
-
-			if (result & (int)CollisionState::RIGHT)
-				object.xvel = 0.0f;
 		}
 
+		if (result & (int)CollisionState::LEFT && object.xvel < 0.0f)
+			object.xvel = 0.0f;
+		if (result & (int)CollisionState::RIGHT && object.xvel > 0.0f)
+			object.xvel = 0.0f;
 		if (result & (int)CollisionState::TOP && object.yvel < 0.0f)
 			object.yvel = 0.0f;
 		if (result & (int)CollisionState::BOTTOM && object.yvel > 0.0f)
