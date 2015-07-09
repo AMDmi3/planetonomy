@@ -39,6 +39,7 @@ public:
 	typedef std::vector<SDL2pp::Rect> CollisionMap;
 
 	struct TileInfo {
+		SDL2pp::Rect source_rect;
 		CollisionMap collision_map;
 		bool deadly_flag = false;
 
@@ -104,6 +105,13 @@ public:
 			}
 			return transformed_map;
 		}
+
+		const SDL2pp::Rect& GetSourceRect() const {
+			return info_.source_rect;
+		}
+	};
+
+	class MetaTile {
 	};
 
 	enum ObjectTypes {

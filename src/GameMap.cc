@@ -42,12 +42,33 @@ void GameMap::ParseTileset(const pugi::xml_node& map) {
 	auto tileset = map.child("tileset");
 	int firstgid = tileset.attribute("firstgid").as_int();
 
+	int tilewidth = tileset.attribute("tilewidth").as_int();
+	int tileheight = tileset.attribute("tileheight").as_int();
+
+	int imagewidth = tileset.child("image").attribute("width").as_int();
+	int imageheight = tileset.child("image").attribute("height").as_int();
+
+	int tilesinrow = imagewidth / tilewidth;
+
+	if (tilewidth <= 0 || tileheight <= 0 || imagewidth <= 0 || imageheight <= 0)
+			throw std::runtime_error("cannot process map file: unexpected tileset dimensions");
+
 	for (auto tile = tileset.child("tile"); tile; tile = tile.next_sibling("tile")) {
-		int id = tile.attribute("id").as_int() + firstgid;
-		if (id < 1)
+		int id = tile.attribute("id").as_int();
+
+		int global_id = id + firstgid;
+		if (global_id < 1)
 			throw std::runtime_error("cannot process map file: unexpected tile id");
 
 		TileInfo ti;
+
+		// rect
+		ti.source_rect = SDL2pp::Rect(
+				(id % tilesinrow) * tilewidth,
+				(id / tilesinrow) * tileheight,
+				tilewidth,
+				tileheight
+			);
 
 		// properties
 		for (auto property = tile.child("properties").child("property"); property; property = property.next_sibling("property")) {
@@ -65,7 +86,7 @@ void GameMap::ParseTileset(const pugi::xml_node& map) {
 				);
 		}
 
-		tile_infos_.insert(std::make_pair(id, ti));
+		tile_infos_.insert(std::make_pair(global_id, ti));
 	}
 
 	tile_infos_.insert(std::make_pair(0, TileInfo())); // add empty tile

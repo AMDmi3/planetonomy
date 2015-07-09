@@ -166,10 +166,6 @@ void GameScene::RenderGround(const SDL2pp::Point& offset) {
 			if (tt.GetType() == 0)
 				continue;
 
-			int nsrctile = tt.GetType() - 1;
-			int srcx = nsrctile % kAtlasWidthTiles * kTileSize;
-			int srcy = nsrctile / kAtlasWidthTiles * kTileSize;
-
 			if (tt.IsFlipped()) {
 				// handle tiled's flipping flags
 				int flipflag = 0;
@@ -183,7 +179,7 @@ void GameScene::RenderGround(const SDL2pp::Point& offset) {
 				}
 
 				painter_.Copy(
-						SDL2pp::Rect(srcx, srcy, kTileSize, kTileSize),
+						tt.GetSourceRect(),
 						SDL2pp::Point(x * kTileSize, y * kTileSize),
 						angle,
 						SDL2pp::NullOpt,
@@ -191,7 +187,7 @@ void GameScene::RenderGround(const SDL2pp::Point& offset) {
 					);
 			} else {
 				painter_.Copy(
-						SDL2pp::Rect(srcx, srcy, kTileSize, kTileSize),
+						tt.GetSourceRect(),
 						SDL2pp::Point(x * kTileSize, y * kTileSize)
 					);
 			}
