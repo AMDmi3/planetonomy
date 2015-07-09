@@ -42,27 +42,35 @@ private:
 		float xvel;
 		float yvel;
 
-		SDL2pp::Rect rect;
-		SDL2pp::Rect collision_rect;
+		const GameMap::MetaTileInfo& metatile;
 
-		DynamicObject(int x, int y, const SDL2pp::Rect& rect)
-			: x(x), y(y),
-			  xvel(0), yvel(0),
-			  rect(rect),
-			  collision_rect(rect) {
+		DynamicObject(const GameMap::MetaTileInfo& metatile)
+			: x(0.0f), y(0.0f),
+			  xvel(0.0f), yvel(0.0f),
+			  metatile(metatile) {
+		}
+
+		void Place(const SDL2pp::Rect& place) {
+			x = place.x;
+			y = place.y;
 		}
 
 		SDL2pp::Point GetPoint() const {
 			return SDL2pp::Point((int)x, (int)y);
 		}
 
-		SDL2pp::Rect GetRect() const {
-			return rect + GetPoint();
+		SDL2pp::Point GetAnchor() const {
+			return GetPoint() + SDL2pp::Point(metatile.source_rect.w / 2, metatile.source_rect.h - 1);
+		}
+
+		const SDL2pp::Rect& GetSrcRect() const {
+			return metatile.source_rect;
 		}
 
 		template <class Processor>
 		void ForeachCollisionRect(Processor processor) const {
-			processor(collision_rect + GetPoint());
+			for (const auto& rect : metatile.collision_map)
+				processor(rect + GetPoint());
 		}
 	};
 

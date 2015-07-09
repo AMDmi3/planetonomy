@@ -33,18 +33,11 @@ GameScene::GameScene(Application& app)
 	  game_map_(DATADIR "/maps/planetonomy.tmx"),
 	  painter_(GetRenderer(), tiles_, kScreenWidthPixels, kScreenHeightPixels),
 	  prev_frame_time_(SDL_GetTicks()),
-	  player_(0.0f, 0.0f,
-			  SDL2pp::Rect(-SpriteData[(int)SpriteNames::PLAYER].w / 2, -SpriteData[(int)SpriteNames::PLAYER].h + 1, SpriteData[(int)SpriteNames::PLAYER].w, SpriteData[(int)SpriteNames::PLAYER].h)
-		  ),
-	  lander_(0.0f, 0.0f, SDL2pp::Rect(SpriteData[(int)SpriteNames::LANDER]).SetX(0).SetY(0)) {
-	player_.collision_rect.y += 1; // XXX: unhardcode
-	player_.collision_rect.h -= 1;
+	  player_(game_map_.GetMetaTileInfo("player")),
+	  lander_(game_map_.GetMetaTileInfo("lander")) {
 
-	player_.x = game_map_.GetObject(GameMap::PLAYER_START).rect.x + game_map_.GetObject(GameMap::PLAYER_START).rect.w / 2;
-	player_.y = game_map_.GetObject(GameMap::PLAYER_START).rect.GetY2();
-
-	lander_.x = game_map_.GetObject(GameMap::LANDER).rect.x;
-	lander_.y = game_map_.GetObject(GameMap::LANDER).rect.y;
+	player_.Place(game_map_.GetObject(GameMap::PLAYER_START).rect);
+	lander_.Place(game_map_.GetObject(GameMap::LANDER).rect);
 
 	painter_.UpdateSize();
 }
@@ -149,8 +142,8 @@ void GameScene::Render() {
 	painter_.Clear();
 
 	SDL2pp::Point screen_offset{
-		player_.GetPoint().x / (kScreenWidthTiles * kTileSize) * (kScreenWidthTiles * kTileSize),
-		player_.GetPoint().y / (kScreenHeightTiles * kTileSize) * (kScreenHeightTiles * kTileSize)
+		player_.GetAnchor().x / (kScreenWidthTiles * kTileSize) * (kScreenWidthTiles * kTileSize),
+		player_.GetAnchor().y / (kScreenHeightTiles * kTileSize) * (kScreenHeightTiles * kTileSize)
 	};
 
 	RenderGround(screen_offset);
@@ -197,11 +190,8 @@ void GameScene::RenderGround(const SDL2pp::Point& offset) {
 
 void GameScene::RenderPlayer(const SDL2pp::Point& offset) {
 	painter_.Copy(
-			SpriteData[(int)SpriteNames::PLAYER],
-			SDL2pp::Point(
-				(int)player_.GetRect().x - offset.x,
-				(int)player_.GetRect().y - offset.y
-			),
+			player_.GetSrcRect(),
+			player_.GetPoint() - offset,
 			0.0,
 			SDL2pp::NullOpt,
 			player_facing_right_ ? 0 : SDL_FLIP_HORIZONTAL
@@ -210,11 +200,8 @@ void GameScene::RenderPlayer(const SDL2pp::Point& offset) {
 
 void GameScene::RenderLander(const SDL2pp::Point& offset) {
 	painter_.Copy(
-			SpriteData[(int)SpriteNames::LANDER],
-			SDL2pp::Point(
-				(int)lander_.GetRect().x - offset.x,
-				(int)lander_.GetRect().y - offset.y
-			)
+			lander_.GetSrcRect(),
+			lander_.GetPoint() - offset
 		);
 }
 
