@@ -20,9 +20,9 @@
 #include "Sprites.hh"
 
 const SDL2pp::Rect SpriteData[(int)SpriteNames::NUM_SPRITES] = {
-	{ 1, 239, 7, 16 },  // PLAYER
+	{ 37, 48, 7, 16 },  // PLAYER
 	{ 0, 48, 32, 32 },  // LANDER
-	{ 1, 209, 32, 5 },  // MOUTH_MONSTER_0
-	{ 1, 215, 32, 9 },  // MOUTH_MONSTER_1
-	{ 1, 225, 32, 13 },  // MOUTH_MONSTER_2
+	{ 0, 80, 32, 16 },  // MOUTH_MONSTER_0
+	{ 0, 96, 32, 16 },  // MOUTH_MONSTER_1
+	{ 0, 112, 32, 16 },  // MOUTH_MONSTER_2
 };
